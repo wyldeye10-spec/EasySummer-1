@@ -12,6 +12,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { useTodos } from '../../hooks/useTodos'
+import { useUIStore } from '../../store/uiStore'
 import { TodoItem } from './TodoItem'
 import { EmptyState } from '../common/EmptyState'
 import { SkeletonCard } from '../common/Skeleton'
@@ -21,6 +22,7 @@ const VIRTUAL_SCROLL_THRESHOLD = 500
 
 export function TodoList() {
   const { todos, loading, completeTodo, undoCompleteTodo, deleteTodo, updateTodo, reorderTodos } = useTodos()
+  const mode = useUIStore(s => s.mode)
   const [showAllCompleted, setShowAllCompleted] = useState(false)
 
   const sensors = useSensors(
@@ -35,11 +37,11 @@ export function TodoList() {
   // Exclude subtasks from the main list — they render under their parent
   const { displayList, olderCompleted, completionRate, totalCount, pendingIds } = useMemo(() => {
     const pending = todos
-      .filter(t => t.status === 'pending' && !t.parentId)
+      .filter(t => t.status === 'pending' && !t.parentId && t.mode === mode)
       .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
 
     const allCompleted = todos
-      .filter(t => t.status === 'completed' && !t.parentId)
+      .filter(t => t.status === 'completed' && !t.parentId && t.mode === mode)
       .sort((a, b) =>
         new Date(b.completedAt || b.updatedAt).getTime() -
         new Date(a.completedAt || a.updatedAt).getTime()
@@ -61,7 +63,7 @@ export function TodoList() {
       totalCount: total,
       pendingIds,
     }
-  }, [todos])
+  }, [todos, mode])
 
   const handleComplete = useCallback((id: string) => {
     completeTodo(id)
@@ -187,7 +189,7 @@ export function TodoList() {
 
       {/* Older completed (before today) — collapsible */}
       {olderCompleted.length > 0 && (
-        <div className="mt-5 animate-fade-in">
+        <div className="mt-5">
           <button
             onClick={() => setShowAllCompleted(!showAllCompleted)}
             className="flex items-center gap-2 text-sm text-warm-400 hover:text-warm-500 transition-all mb-3 group py-1"
@@ -206,7 +208,7 @@ export function TodoList() {
           {showAllCompleted && (
             <div className="space-y-1 opacity-60">
               {olderCompleted.map((todo, i) => (
-                <div key={todo.id} className="animate-slide-down" style={{ animationDelay: `${i * 0.03}s` }}>
+                <div key={todo.id}>
                   <TodoItem
                     todo={todo}
                     index={i}

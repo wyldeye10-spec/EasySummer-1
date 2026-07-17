@@ -73,7 +73,7 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
   return (
     <div
       ref={setNodeRef}
-      style={{ ...style, animationDelay: `${index * 0.05}s` } as React.CSSProperties}
+      style={style as React.CSSProperties}
       className={`group flex items-start gap-3 p-3.5 rounded-xl transition-all duration-300 border hover-lift relative ${
         exiting ? 'opacity-0 translate-x-8 scale-95 pointer-events-none' : ''
       } ${

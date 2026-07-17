@@ -1,15 +1,17 @@
 import { useMemo } from 'react'
 import { useTodoStore } from '../../store/todoStore'
+import { useUIStore } from '../../store/uiStore'
 
 export function StatsCard() {
   const todos = useTodoStore(s => s.todos)
+  const mode = useUIStore(s => s.mode)
 
   const stats = useMemo(() => {
     const today = new Date().toISOString().split('T')[0]
     const todayCompleted = todos.filter(
-      t => t.status === 'completed' && t.completedAt?.startsWith(today)
+      t => t.status === 'completed' && t.completedAt?.startsWith(today) && t.mode === mode
     ).length
-    const totalPending = todos.filter(t => t.status === 'pending').length
+    const totalPending = todos.filter(t => t.status === 'pending' && t.mode === mode).length
 
     // This week's trend (last 7 days)
     const weekData: { day: string; count: number }[] = []
@@ -20,7 +22,7 @@ export function StatsCard() {
       const dayLabel = ['日', '一', '二', '三', '四', '五', '六'][d.getDay()]
       weekData.push({
         day: dayLabel,
-        count: todos.filter(t => t.status === 'completed' && t.completedAt?.startsWith(ds)).length,
+        count: todos.filter(t => t.status === 'completed' && t.completedAt?.startsWith(ds) && t.mode === mode).length,
       })
     }
     const maxWeek = Math.max(...weekData.map(d => d.count), 1)
@@ -30,7 +32,7 @@ export function StatsCard() {
     const checkDate = new Date()
     while (true) {
       const ds = checkDate.toISOString().split('T')[0]
-      const dayTodos = todos.filter(t => t.status === 'completed' && t.completedAt?.startsWith(ds))
+      const dayTodos = todos.filter(t => t.status === 'completed' && t.completedAt?.startsWith(ds) && t.mode === mode)
       if (dayTodos.length > 0) {
         streak++
         checkDate.setDate(checkDate.getDate() - 1)
@@ -40,7 +42,7 @@ export function StatsCard() {
     }
 
     return { todayCompleted, totalPending, weekData, maxWeek, streak }
-  }, [todos])
+  }, [todos, mode])
 
   return (
     <div className="glass rounded-2xl border border-warm-200/60 p-5 hover-lift">

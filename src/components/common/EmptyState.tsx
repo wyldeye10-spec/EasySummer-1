@@ -10,7 +10,7 @@ interface Props {
 
 export function EmptyState({ icon = '🎯', title, description, action }: Props) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 px-4 animate-fade-in">
+    <div className="flex flex-col items-center justify-center py-12 px-4">
       <span className="text-5xl mb-4 animate-float">{icon}</span>
       <h3 className="text-base font-medium text-warm-600 mb-1">{title}</h3>
       {description && (

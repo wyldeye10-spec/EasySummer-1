@@ -95,8 +95,7 @@ export function MonthlyJournal() {
         {statCards.map((card, i) => (
           <div
             key={card.label}
-            className="glass rounded-2xl border border-warm-200/60 p-4 text-center hover-lift animate-scale-in"
-            style={{ animationDelay: `${i * 0.08}s` }}
+            className="glass rounded-2xl border border-warm-200/60 p-4 text-center hover-lift"
           >
             <div className={`text-3xl font-extrabold tabular-nums ${card.color}`}>
               {card.value}

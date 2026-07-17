@@ -45,10 +45,9 @@ export function Trash() {
             return (
               <div
                 key={todo.id}
-                className={`flex items-center gap-3 p-4 glass rounded-2xl border transition-all hover-lift animate-slide-up ${
+                className={`flex items-center gap-3 p-4 glass rounded-2xl border transition-all hover-lift ${
                   isExpiring ? 'border-red-200/60' : 'border-warm-200/60'
                 }`}
-                style={{ animationDelay: `${i * 0.05}s` }}
               >
                 <div className="flex-1 min-w-0">
                   <div className="text-sm text-warm-600 line-through">{todo.title}</div>

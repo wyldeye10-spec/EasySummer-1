@@ -74,8 +74,7 @@ export function CategoryPieChart({ todos }: Props) {
           paddingAngle={3}
           dataKey="value"
           animationBegin={0}
-          animationDuration={800}
-          animationEasing="ease-out"
+          animationDuration={0}
         >
           {data.map(entry => (
             <Cell

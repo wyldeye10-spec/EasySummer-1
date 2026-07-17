@@ -8,9 +8,9 @@ export function Skeleton({ className = '' }: { className?: string }) {
 
 export function SkeletonCard() {
   return (
-    <div className="space-y-4 p-4 animate-fade-in">
+    <div className="space-y-4 p-4">
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="flex items-center gap-3" style={{ animationDelay: `${i * 0.1}s` }}>
+        <div key={i} className="flex items-center gap-3">
           <Skeleton className="w-5 h-5 rounded-full" />
           <Skeleton className="h-5 flex-1" />
           <Skeleton className="w-16 h-5" />

@@ -14,18 +14,18 @@ export function Dashboard() {
       </div>
 
       {/* Hero area */}
-      <div className="animate-slide-down">
+      <div>
         <QuickInput />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
         {/* Main Todo List */}
-        <div className="lg:col-span-2 animate-slide-up">
+        <div className="lg:col-span-2">
           <TodoList />
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-4 animate-fade-in">
+        <div className="space-y-4">
           <StatsCard />
           <PomodoroTimer />
         </div>

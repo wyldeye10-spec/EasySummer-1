@@ -59,7 +59,7 @@ export function Settings() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in max-w-2xl">
+    <div className="space-y-6 max-w-2xl">
       <h2 className="text-xl font-bold gradient-text">⚙️ 设置</h2>
 
       {/* Pomodoro */}

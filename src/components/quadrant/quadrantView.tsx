@@ -9,6 +9,7 @@ import {
   type DragStartEvent,
 } from '@dnd-kit/core'
 import { useTodoStore } from '../../store/todoStore'
+import { useUIStore } from '../../store/uiStore'
 import type { Quadrant } from '../../types'
 import { TodoItem } from '../dashboard/TodoItem'
 import { EmptyState } from '../common/EmptyState'
@@ -53,6 +54,7 @@ function QuadrantDropZone({ quadrant, children }: { quadrant: Quadrant; children
 export function QuadrantView() {
   const todos = useTodoStore(s => s.todos)
   const loading = useTodoStore(s => s.loading)
+  const mode = useUIStore(s => s.mode)
   const completeTodo = useTodoStore(s => s.completeTodo)
   const undoCompleteTodo = useTodoStore(s => s.undoCompleteTodo)
   const deleteTodo = useTodoStore(s => s.deleteTodo)
@@ -83,7 +85,7 @@ export function QuadrantView() {
 
   const byQuadrant = (q: Quadrant) =>
     todos
-      .filter(t => t.status === 'pending' && t.quadrant === q)
+      .filter(t => t.status === 'pending' && t.quadrant === q && t.mode === mode)
       .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
 
   return (
@@ -107,8 +109,7 @@ export function QuadrantView() {
               return (
                 <QuadrantDropZone key={key} quadrant={key}>
                   <div
-                    className={`rounded-2xl border border-warm-200/60 border-l-4 ${config.borderColor} bg-gradient-to-br ${config.gradient} p-5 min-h-[200px] hover-lift transition-all animate-slide-up`}
-                    style={{ animationDelay: `${idx * 0.1}s` }}
+                    className={`rounded-2xl border border-warm-200/60 border-l-4 ${config.borderColor} bg-gradient-to-br ${config.gradient} p-5 min-h-[200px] hover-lift transition-all`}
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
