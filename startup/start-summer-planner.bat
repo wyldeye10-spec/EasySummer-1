@@ -1,3 +1,3 @@
 @echo off
-cd /d "D:\claude code\project summer vocation plan"
+cd /d "D:\claude code\EasySummer-clean"
 start "" /B npm run dev
