@@ -87,7 +87,7 @@ export function QuadrantView() {
       .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
 
   return (
-    <div className="space-y-4 animate-fade-in">
+    <div className="space-y-4">
       <div>
         <h2 className="text-xl font-bold gradient-text">📐 四象限视图</h2>
         <p className="text-sm text-warm-400 mt-1">

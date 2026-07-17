@@ -4,7 +4,6 @@ import { EmptyState } from '../common/EmptyState'
 
 export function Trash() {
   const todos = useTodoStore(s => s.todos)
-  const loading = useTodoStore(s => s.loading)
   const restoreTodo = useTodoStore(s => s.restoreTodo)
   const permanentlyDeleteTodo = useTodoStore(s => s.permanentlyDeleteTodo)
   const cleanupTrash = useTodoStore(s => s.cleanupTrash)
@@ -15,10 +14,8 @@ export function Trash() {
 
   const deleted = todos.filter(t => t.status === 'deleted')
 
-  if (loading) return null
-
   return (
-    <div className="space-y-4 animate-fade-in max-w-2xl">
+    <div className="space-y-4 max-w-2xl">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold gradient-text">🗑️ 回收站</h2>
         {deleted.length > 0 && (

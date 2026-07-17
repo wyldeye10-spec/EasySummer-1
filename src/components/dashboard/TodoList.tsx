@@ -79,7 +79,7 @@ export function TodoList() {
     <div>
       {/* Progress header */}
       {totalCount > 0 && (
-        <div className="mb-4 animate-slide-down">
+        <div className="mb-4">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-xs text-warm-500 font-medium">
               今日进度
