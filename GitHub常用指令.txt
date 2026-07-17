@@ -1,0 +1,35 @@
+═══════════════════════════════════════════
+  GitHub 上传项目常用指令速查
+═══════════════════════════════════════════
+
+【一、首次上传项目（从零开始）】
+
+  git init                              # 初始化本地仓库
+  git add .                             # 暂存所有文件
+  git commit -m "Initial commit"        # 创建第一次提交
+  git remote add origin <仓库URL>        # 关联远程仓库
+  git branch -M main                    # 重命名分支为 main
+  git push -u origin main               # 推送到 GitHub（首次）
+
+
+【二、日常更新（已有仓库）】
+
+  git add .                             # 暂存修改
+  git commit -m "描述改了什么"            # 提交
+  git push                              # 推送
+
+
+【三、常用查询】
+
+  git status                            # 查看当前状态（改了哪些文件）
+  git log --oneline                     # 查看提交历史
+  git remote -v                         # 查看关联的远程仓库
+
+
+【四、常见问题】
+
+  git branch -M main                    # 分支名不是 main 时改名
+  git remote set-url origin <新URL>      # 修改远程仓库地址
+
+
+═══════════════════════════════════════
