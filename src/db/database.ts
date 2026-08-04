@@ -28,6 +28,20 @@ export class PlannerDB extends Dexie {
         })
       }
     })
+
+    // v3: add pomodoroCount to todos
+    this.version(3).stores({
+      todos: 'id, status, category, priority, quadrant, mode, dueDate, createdAt, sortOrder',
+      dailySummaries: 'id, date',
+      settings: 'id',
+    }).upgrade(async tx => {
+      const todos = await tx.table('todos').toArray() as Todo[]
+      for (const todo of todos) {
+        if (todo.pomodoroCount === undefined) {
+          await tx.table('todos').update(todo.id, { pomodoroCount: 0 })
+        }
+      }
+    })
   }
 }
 

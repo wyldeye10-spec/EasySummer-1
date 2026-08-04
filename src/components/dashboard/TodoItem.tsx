@@ -319,6 +319,24 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
                 : `${todo.estimatedMinutes}m`}
             </span>
           )}
+
+          {/* Pomodoro count */}
+          {todo.pomodoroCount != null && todo.pomodoroCount > 0 && (
+            <span className="text-xs text-study-500 dark:text-study-400 flex items-center gap-1">
+              <span className="text-[10px]">🍅</span>
+              ×{todo.pomodoroCount}
+            </span>
+          )}
+
+          {/* Actual focus time */}
+          {todo.actualMinutes != null && todo.actualMinutes > 0 && (
+            <span className="text-xs text-emerald-500 dark:text-emerald-400 flex items-center gap-1">
+              <span className="text-[10px]">🎯</span>
+              {todo.actualMinutes >= 60
+                ? `${Math.floor(todo.actualMinutes / 60)}h${todo.actualMinutes % 60 ? ` ${todo.actualMinutes % 60}m` : ''}`
+                : `${todo.actualMinutes}m`}
+            </span>
+          )}
         </div>
 
         {/* Undo button with countdown bar */}

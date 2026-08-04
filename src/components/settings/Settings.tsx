@@ -247,24 +247,24 @@ export function Settings() {
         </div>
       </div>
 
-      {/* Tag Management */}
+      {/* Quick Input Templates */}
       <div className="glass rounded-2xl border border-warm-200/60 p-5 hover-lift">
-        <h3 className="font-semibold text-warm-800 mb-4 flex items-center gap-2">
-          <span className="text-lg">🏷️</span> 自定义标签
-          <span className="text-xs text-warm-400 font-normal">
-            （在输入框中使用 #标签名 即可）
-          </span>
+        <h3 className="font-semibold text-warm-800 mb-1 flex items-center gap-2">
+          <span className="text-lg">📋</span> 快捷输入模板
         </h3>
+        <p className="text-xs text-warm-400 mb-4">
+          在输入框旁显示为快捷按钮，点击即可追加到输入内容中
+        </p>
         <div className="flex flex-wrap gap-2 mb-4">
           {settings.customTags.length === 0 && (
-            <p className="text-sm text-warm-400">暂无自定义标签，添加一个吧～</p>
+            <p className="text-sm text-warm-400">暂无模板，添加一个吧～</p>
           )}
           {settings.customTags.map(tag => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-warm-100/80 dark:bg-warm-800/60 text-warm-700 dark:text-warm-300 border border-warm-200/50 dark:border-warm-700/50 group"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-study-50 dark:bg-study-900/20 text-study-600 dark:text-study-400 border border-study-200/60 dark:border-study-700/40 group"
             >
-              #{tag}
+              {tag}
               <button
                 onClick={() => update({
                   customTags: settings.customTags.filter(t => t !== tag),
@@ -280,7 +280,7 @@ export function Settings() {
           <input
             id="new-tag"
             type="text"
-            placeholder="输入标签名..."
+            placeholder="例如：今天前、明晚前…"
             className="flex-1 px-4 py-2 bg-warm-50/50 dark:bg-warm-800/50 border border-warm-200/60 dark:border-warm-700/40 rounded-xl text-sm text-warm-700 dark:text-warm-200 placeholder-warm-400 focus:outline-none focus:ring-2 focus:ring-warm-300/30"
             onKeyDown={e => {
               if (e.key === 'Enter') {
@@ -301,7 +301,7 @@ export function Settings() {
               }
               el.value = ''
             }}
-            className="px-4 py-2 bg-gradient-to-br from-warm-400 to-warm-500 text-white rounded-xl text-sm font-medium hover:from-warm-500 hover:to-warm-600 transition-all shadow-md active:scale-95"
+            className="px-4 py-2 bg-gradient-to-br from-study-400 to-study-500 text-white rounded-xl text-sm font-medium hover:from-study-500 hover:to-study-600 transition-all shadow-md active:scale-95"
           >
             添加
           </button>

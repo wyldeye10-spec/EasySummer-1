@@ -18,6 +18,7 @@ export interface Todo {
   dueDate?: string      // ISO date string
   estimatedMinutes?: number
   actualMinutes?: number
+  pomodoroCount?: number   // 该任务完成的番茄钟次数
   status: TodoStatus
   mode: AppMode
   parentId?: string     // sub-task parent

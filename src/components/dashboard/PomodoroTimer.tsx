@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { usePomodoro } from '../../hooks/usePomodoro'
 import { useUIStore } from '../../store/uiStore'
 import { useTodoStore } from '../../store/todoStore'
@@ -10,12 +10,15 @@ export function PomodoroTimer() {
   const todos = useTodoStore(s => s.todos)
   const updateTodo = useTodoStore(s => s.updateTodo)
   const addToast = useUIStore(s => s.addToast)
+  const darkMode = useUIStore(s => s.darkMode)
   const { state, displayMinutes, displaySeconds, progress, start, pause, resume, reset } =
     usePomodoro()
   const [pulse, setPulse] = useState(false)
   const [showLogTime, setShowLogTime] = useState(false)
   const [selectedTodoId, setSelectedTodoId] = useState('')
   const [logMinutes, setLogMinutes] = useState(minutes)
+  const [confettiActive, setConfettiActive] = useState(false)
+  const confettiPieces = useRef<Array<{ angle: number; dist: number; delay: number; color: string; size: number }>>([])
 
   const pendingTodos = useMemo(
     () => todos.filter(t => t.status === 'pending' && !t.parentId),
@@ -28,17 +31,35 @@ export function PomodoroTimer() {
       setLogMinutes(minutes)
       setShowLogTime(true)
       const t = setTimeout(() => setPulse(false), 2000)
-      return () => clearTimeout(t)
+
+      // Generate confetti particles
+      const colors = darkMode
+        ? ['#7eb8da', '#50b880', '#d9c4a0', '#e8d5b7', '#a3d0ea', '#90d8b0']
+        : ['#5a9ec9', '#4ade80', '#c49a5c', '#f59e0b', '#7eb8da', '#86efac']
+      confettiPieces.current = Array.from({ length: 16 }, (_, i) => ({
+        angle: (i / 16) * Math.PI * 2 + (Math.random() - 0.5) * 0.3,
+        dist: 40 + Math.random() * 50,
+        delay: Math.random() * 0.4,
+        color: colors[i % colors.length],
+        size: 3 + Math.random() * 4,
+      }))
+      setConfettiActive(true)
+      const t2 = setTimeout(() => setConfettiActive(false), 1500)
+      return () => { clearTimeout(t); clearTimeout(t2) }
     }
-  }, [state, minutes])
+  }, [state, minutes, darkMode])
 
   const handleLogTime = () => {
     if (selectedTodoId) {
       const todo = todos.find(t => t.id === selectedTodoId)
       if (todo) {
         const current = todo.actualMinutes || 0
-        updateTodo(selectedTodoId, { actualMinutes: current + logMinutes })
-        addToast(`✓ 已为「${todo.title.slice(0, 15)}...」记录 ${logMinutes} 分钟`)
+        const currentCount = todo.pomodoroCount || 0
+        updateTodo(selectedTodoId, {
+          actualMinutes: current + logMinutes,
+          pomodoroCount: currentCount + 1,
+        })
+        addToast(`✓ 已为「${todo.title.slice(0, 15)}...」记录 ${logMinutes} 分钟（🍅×${currentCount + 1}）`)
       }
     }
     setShowLogTime(false)
@@ -56,9 +77,15 @@ export function PomodoroTimer() {
   const circumference = 2 * Math.PI * 42
 
   return (
-    <div className={`glass rounded-2xl border border-warm-200/60 p-5 hover-lift transition-all duration-500 ${
-      pulse ? 'ring-2 ring-emerald-300/50 shadow-lg shadow-emerald-200/30' : ''
-    } ${state === 'running' ? 'ring-1 ring-study-300/50 shadow-lg shadow-study-200/20' : ''}`}>
+    <div className={`glass rounded-2xl border p-5 hover-lift transition-all duration-500 ${
+      state === 'running'
+        ? 'border-study-300/60 dark:border-study-600/40 shadow-lg shadow-study-200/30 dark:shadow-study-900/20'
+        : state === 'finished'
+          ? pulse
+            ? 'border-emerald-300/60 dark:border-emerald-600/40 ring-2 ring-emerald-300/50 dark:ring-emerald-600/30 shadow-xl shadow-emerald-200/40 dark:shadow-emerald-900/20'
+            : 'border-emerald-200/40 dark:border-emerald-700/30'
+          : 'border-warm-200/60 dark:border-warm-700/40'
+    }`}>
       <h3 className="text-sm font-medium text-warm-600 mb-4 flex items-center gap-2">
         <span className={state === 'running' ? 'animate-bounce-gentle inline-block' : ''}>🍅</span>
         番茄钟
@@ -73,35 +100,95 @@ export function PomodoroTimer() {
       {/* Circular Timer */}
       <div className="flex flex-col items-center">
         <div className={`relative w-32 h-32 mb-4 transition-transform duration-500 ${
-          state === 'running' ? 'scale-105' : ''
-        }`}>
-          {/* Glow behind the circle */}
-          <div className={`absolute inset-0 rounded-full blur-md transition-all duration-500 ${
-            state === 'running' ? 'bg-study-200/40 scale-110' :
-            state === 'finished' ? 'bg-emerald-200/40 scale-110' :
-            'bg-transparent scale-100'
-          }`} />
+          state === 'running' ? 'animate-breathe' : ''
+        } ${state === 'finished' ? 'animate-bounce-gentle' : ''}`}>
+          {/* Glow layers behind the ring */}
+          {/* Layer 1: dynamic intensity glow — intensifies with progress */}
+          <div
+            className={`absolute inset-0 rounded-full blur-xl transition-all duration-1000 ${
+              state === 'running'
+                ? 'bg-study-200/60 dark:bg-study-800/40'
+                : state === 'finished'
+                  ? 'bg-emerald-200/60 dark:bg-emerald-800/40 animate-glow-burst'
+                  : 'bg-transparent'
+            }`}
+            style={state === 'running' ? { opacity: 0.3 + progress * 0.5 } : undefined}
+          />
+
+          {/* Layer 2: breathing pulse ring (running only) */}
+          {state === 'running' && (
+            <div className="absolute inset-0 rounded-full blur-md bg-study-300/30 dark:bg-study-600/20 animate-breathe" />
+          )}
+
+          {/* Ripple rings (running only) */}
+          {state === 'running' && (
+            <>
+              <div
+                className="absolute inset-0 rounded-full border-2 border-study-300/40 dark:border-study-500/30 pointer-events-none"
+                style={{ animation: 'ripple-expand 3s ease-out infinite' }}
+              />
+              <div
+                className="absolute inset-0 rounded-full border-2 border-study-300/30 dark:border-study-500/20 pointer-events-none"
+                style={{ animation: 'ripple-expand 3s ease-out 1s infinite' }}
+              />
+              <div
+                className="absolute inset-0 rounded-full border-2 border-study-300/20 dark:border-study-500/15 pointer-events-none"
+                style={{ animation: 'ripple-expand 3s ease-out 2s infinite' }}
+              />
+            </>
+          )}
+
+          {/* Confetti burst on completion */}
+          {confettiActive && confettiPieces.current.map((piece, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full pointer-events-none"
+              style={{
+                width: `${piece.size}px`,
+                height: `${piece.size}px`,
+                backgroundColor: piece.color,
+                left: '50%',
+                top: '50%',
+                marginLeft: `-${piece.size / 2}px`,
+                marginTop: `-${piece.size / 2}px`,
+                '--tx': `${Math.cos(piece.angle) * piece.dist}px`,
+                '--ty': `${Math.sin(piece.angle) * piece.dist}px`,
+                animation: `celebrate-particle 0.8s ease-out ${piece.delay}s forwards`,
+                opacity: 0,
+              } as React.CSSProperties}
+            />
+          ))}
 
           <svg className="w-full h-full -rotate-90 relative z-10" viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor={darkMode ? '#6ea8ca' : '#5a9ec9'} />
+                <stop offset="100%" stopColor={darkMode ? '#a3d0ea' : '#7eb8da'} />
+              </linearGradient>
+              <linearGradient id="emeraldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor={darkMode ? '#50b880' : '#4ade80'} />
+                <stop offset="100%" stopColor={darkMode ? '#90d8b0' : '#86efac'} />
+              </linearGradient>
+            </defs>
             {/* Background ring */}
             <circle
               cx="50" cy="50" r="42"
               fill="none"
               stroke="currentColor"
-              className="text-warm-200/60"
+              className="text-warm-200/60 dark:text-warm-700/40"
               strokeWidth="5"
             />
-            {/* Progress ring */}
+            {/* Progress ring — gradient when running/finished */}
             <circle
               cx="50" cy="50" r="42"
               fill="none"
-              stroke="currentColor"
+              stroke={
+                state === 'running' ? 'url(#progressGradient)' :
+                state === 'finished' ? 'url(#emeraldGradient)' :
+                'currentColor'
+              }
               className={`progress-ring-circle ${
-                state === 'finished'
-                  ? 'text-emerald-400'
-                  : state === 'running'
-                    ? 'text-study-500'
-                    : 'text-warm-400'
+                state === 'running' || state === 'finished' ? '' : 'text-warm-400'
               }`}
               strokeWidth="5"
               strokeLinecap="round"
@@ -111,15 +198,15 @@ export function PomodoroTimer() {
           </svg>
           {/* Center display */}
           <div className="absolute inset-0 flex items-center justify-center z-10">
-            <span className={`text-2xl font-mono font-bold transition-all duration-300 ${
-              state === 'finished'
-                ? 'text-emerald-500 animate-bounce-gentle'
-                : state === 'running'
-                  ? 'text-study-600'
-                  : 'text-warm-700'
-            }`}>
-              {state === 'finished' ? '🎉' : display}
-            </span>
+            {state === 'finished' ? (
+              <span className="text-2xl animate-bounce-gentle">🎉</span>
+            ) : (
+              <span className={`text-2xl font-mono font-bold transition-colors duration-300 ${
+                state === 'running' ? 'text-study-600 dark:text-study-400' : 'text-warm-700 dark:text-warm-200'
+              }`}>
+                {display}
+              </span>
+            )}
           </div>
         </div>
 
@@ -136,7 +223,7 @@ export function PomodoroTimer() {
           {state === 'running' && (
             <button
               onClick={pause}
-              className="px-4 py-2 bg-warm-200/80 text-warm-700 rounded-xl text-sm font-medium hover:bg-warm-300 transition-all active:scale-95"
+              className="px-4 py-2 bg-warm-200/80 dark:bg-warm-800/60 text-warm-700 dark:text-warm-400 rounded-xl text-sm font-medium hover:bg-warm-300 dark:hover:bg-warm-700 transition-all active:scale-95"
             >
               暂停
             </button>
@@ -151,7 +238,7 @@ export function PomodoroTimer() {
               </button>
               <button
                 onClick={reset}
-                className="px-4 py-2 bg-warm-200/80 text-warm-700 rounded-xl text-sm font-medium hover:bg-warm-300 transition-all active:scale-95"
+                className="px-4 py-2 bg-warm-200/80 dark:bg-warm-800/60 text-warm-700 dark:text-warm-400 rounded-xl text-sm font-medium hover:bg-warm-300 dark:hover:bg-warm-700 transition-all active:scale-95"
               >
                 重置
               </button>

@@ -94,5 +94,5 @@ export const DEFAULT_SETTINGS = {
   dailySummaryTime: '22:00',
   motivationalQuotes: DEFAULT_MOTIVATIONAL_QUOTES,
   customCategories: [],
-  customTags: [],
+  customTags: ['今天前', '明晚前', '周三前', '周五前', '预计1h', '预计2h'],
 }

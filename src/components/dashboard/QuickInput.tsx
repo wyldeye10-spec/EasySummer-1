@@ -3,6 +3,7 @@ import type { Priority } from '../../types'
 import { parseInput } from '../../utils/parser'
 import { useTodos } from '../../hooks/useTodos'
 import { useUIStore } from '../../store/uiStore'
+import { useSettingsStore } from '../../store/settingsStore'
 import { QUADRANT_PRIORITY_MAP, PRIORITY_CONFIG } from '../../constants'
 import { formatDate, getRelativeDateDescription } from '../../utils/date'
 
@@ -19,6 +20,7 @@ export function QuickInput() {
   const mode = useUIStore(s => s.mode)
   const addToast = useUIStore(s => s.addToast)
   const storageMode = useUIStore(s => s.storageMode)
+  const quickTemplates = useSettingsStore(s => s.settings.customTags)
   const storageDisabled = storageMode === 'none'
 
   const handleSubmit = useCallback(async () => {
@@ -194,7 +196,7 @@ export function QuickInput() {
             onKeyDown={handleKeyDown}
             onFocus={() => setFocused(true)}
             onBlur={handleBlur}
-            placeholder={storageDisabled ? '无法存储数据，请检查浏览器设置' : '输入新事项，Enter 保存...  (支持 周三前 预计2h)'}
+            placeholder={storageDisabled ? '无法存储数据，请检查浏览器设置' : '输入新事项，Enter 保存…  (支持日期短语、预计时间)'}
             disabled={storageDisabled}
             className={`flex-1 py-2 glass rounded-xl text-warm-800 dark:text-warm-200 placeholder-warm-400/60 dark:placeholder-warm-500/50 focus:outline-none transition-all text-sm bg-transparent ${
               storageDisabled ? 'opacity-50 cursor-not-allowed' : ''
@@ -203,35 +205,43 @@ export function QuickInput() {
             autoFocus
           />
 
-          {/* Submit button hint */}
-          <div className="flex-shrink-0 pointer-events-none">
-            <kbd className={`hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs transition-all duration-300 ${
-              value
-                ? 'bg-warm-500 dark:bg-warm-400 text-white dark:text-warm-900 shadow-sm'
-                : 'bg-warm-200/80 dark:bg-warm-700/60 text-warm-500 dark:text-warm-400'
-            }`}>
-              Enter ↵
-            </kbd>
-          </div>
+          {/* Submit button */}
+          <button
+            onClick={handleSubmit}
+            disabled={!value.trim()}
+            className={`flex-shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-xl text-sm transition-all duration-300 ${
+              value.trim()
+                ? 'bg-warm-500 dark:bg-warm-400 text-white dark:text-warm-900 shadow-sm hover:bg-warm-600 dark:hover:bg-warm-300 active:scale-95 cursor-pointer'
+                : 'bg-warm-200/80 dark:bg-warm-700/60 text-warm-400 dark:text-warm-500 cursor-default'
+            }`}
+            title="提交 (Enter)"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 10 4 15 9 20" />
+              <path d="M20 4v7a4 4 0 0 1-4 4H4" />
+            </svg>
+          </button>
         </div>
       </div>
 
-      {/* Hint chips */}
-      <div className="flex flex-wrap gap-1.5 mt-2">
-        {['周三前', '预计2h'].map((hint) => (
-          <button
-            key={hint}
-            onClick={() => {
-              setValue(v => v ? `${v} ${hint}` : hint)
-              inputRef.current?.focus()
-            }}
-            className="text-xs px-2.5 py-1 rounded-full bg-warm-100/80 dark:bg-warm-800/60 text-warm-500 dark:text-warm-400 border border-warm-200/50 dark:border-warm-700/50 hover:bg-warm-200 dark:hover:bg-warm-700 hover:text-warm-600 dark:hover:text-warm-300 hover:border-warm-300 dark:hover:border-warm-600 transition-all hover:-translate-y-0.5 cursor-pointer"
-            title="点击添加到输入框"
-          >
-            {hint}
-          </button>
-        ))}
-      </div>
+      {/* Quick input templates */}
+      {quickTemplates.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mt-2">
+          {quickTemplates.map((tpl) => (
+            <button
+              key={tpl}
+              onClick={() => {
+                setValue(v => v ? `${v} ${tpl}` : tpl)
+                inputRef.current?.focus()
+              }}
+              className="text-xs px-2.5 py-1 rounded-full bg-study-50 dark:bg-study-900/20 text-study-600 dark:text-study-400 border border-dashed border-study-200/60 dark:border-study-700/40 hover:bg-study-100 dark:hover:bg-study-800/30 hover:text-study-700 dark:hover:text-study-300 hover:border-study-300 dark:hover:border-study-600 transition-all hover:-translate-y-0.5 cursor-pointer"
+              title="点击添加到输入框"
+            >
+              {tpl}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
