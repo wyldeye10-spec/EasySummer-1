@@ -90,6 +90,11 @@ export async function permanentlyDeleteTodo(id: string): Promise<void> {
   try { await idb.permanentlyDeleteTodo(id) } catch { await ls.lsPermanentlyDeleteTodo(id) }
 }
 
+export async function bulkImportTodos(todos: Todo[]): Promise<void> {
+  if (storageMode() === 'localstorage') { await ls.lsBulkImportTodos(todos); return }
+  try { await idb.bulkImportTodos(todos) } catch { await ls.lsBulkImportTodos(todos) }
+}
+
 export async function cleanupExpiredTrash(daysThreshold: number = 30): Promise<number> {
   if (storageMode() === 'localstorage') return ls.lsCleanupTrash(daysThreshold)
   try { return await idb.cleanupExpiredTrash(daysThreshold) } catch { return ls.lsCleanupTrash(daysThreshold) }

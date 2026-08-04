@@ -1,8 +1,9 @@
 import { useState, useRef, useCallback } from 'react'
+import type { Priority } from '../../types'
 import { parseInput } from '../../utils/parser'
 import { useTodos } from '../../hooks/useTodos'
 import { useUIStore } from '../../store/uiStore'
-import { QUADRANT_PRIORITY_MAP } from '../../constants'
+import { QUADRANT_PRIORITY_MAP, PRIORITY_CONFIG } from '../../constants'
 import { formatDate, getRelativeDateDescription } from '../../utils/date'
 
 export function QuickInput() {
@@ -11,6 +12,7 @@ export function QuickInput() {
   const [focused, setFocused] = useState(false)
   const [successBurst, setSuccessBurst] = useState(false)
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [selectedPriority, setSelectedPriority] = useState<Priority | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const dateInputRef = useRef<HTMLInputElement>(null)
   const { addTodo, checkDuplicate } = useTodos()
@@ -36,12 +38,13 @@ export function QuickInput() {
 
     const parsed = parseInput(trimmed)
 
+    const finalPriority = selectedPriority || parsed.priority || 'P4'
     await addTodo({
       title: parsed.title,
       category: mode,  // Auto-set from current mode toggle
       tags: parsed.tags,
-      priority: parsed.priority || 'P3',
-      quadrant: QUADRANT_PRIORITY_MAP[parsed.priority || 'P3'],
+      priority: finalPriority,
+      quadrant: QUADRANT_PRIORITY_MAP[finalPriority],
       dueDate: selectedDate || parsed.dueDate || undefined,
       estimatedMinutes: parsed.estimatedMinutes || undefined,
       status: 'pending',
@@ -54,12 +57,19 @@ export function QuickInput() {
     addToast('✓ 已添加事项')
     setValue('')
     setSelectedDate(null)
+    setSelectedPriority(null)
     inputRef.current?.focus()
-  }, [value, selectedDate, checkDuplicate, addTodo, mode, addToast])
+  }, [value, selectedDate, selectedPriority, checkDuplicate, addTodo, mode, addToast])
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value)
-  }, [])
+    const newValue = e.target.value
+    setValue(newValue)
+    // Sync parsed /pN syntax with visual priority chips
+    const parsed = parseInput(newValue)
+    if (parsed.priority !== selectedPriority) {
+      setSelectedPriority(parsed.priority)
+    }
+  }, [selectedPriority])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -112,6 +122,36 @@ export function QuickInput() {
         </div>
       )}
 
+      {/* Priority selector chips */}
+      <div className="flex flex-wrap gap-1.5 mb-2">
+        {(Object.entries(PRIORITY_CONFIG) as [Priority, { emoji: string; label: string }][]).map(([p, cfg]) => {
+          const isActive = selectedPriority === p
+          const activeClasses: Record<string, string> = {
+            P1: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-300 dark:border-red-700',
+            P2: 'bg-study-100 dark:bg-study-900/30 text-study-700 dark:text-study-400 border-study-300 dark:border-study-700',
+            P3: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700',
+            P4: 'bg-warm-100 dark:bg-warm-800/60 text-warm-600 dark:text-warm-300 border-warm-300 dark:border-warm-600',
+          }
+          return (
+            <button
+              key={p}
+              onClick={() => {
+                setSelectedPriority(isActive ? null : p)
+                inputRef.current?.focus()
+              }}
+              className={`text-xs px-2.5 py-1 rounded-full border transition-all cursor-pointer hover:-translate-y-0.5 ${
+                isActive
+                  ? activeClasses[p] + ' font-medium shadow-sm'
+                  : 'bg-warm-100/80 dark:bg-warm-800/60 text-warm-500 dark:text-warm-400 border-warm-200/50 dark:border-warm-700/50 hover:bg-warm-200 dark:hover:bg-warm-700 hover:text-warm-600 dark:hover:text-warm-300 hover:border-warm-300 dark:hover:border-warm-600'
+              }`}
+              title={isActive ? '取消选择' : cfg.label}
+            >
+              {cfg.emoji} {cfg.label}
+            </button>
+          )
+        })}
+      </div>
+
       {/* Main input card */}
       <div className={`relative rounded-2xl transition-all duration-300 ${
         focused
@@ -154,7 +194,7 @@ export function QuickInput() {
             onKeyDown={handleKeyDown}
             onFocus={() => setFocused(true)}
             onBlur={handleBlur}
-            placeholder={storageDisabled ? '无法存储数据，请检查浏览器设置' : '输入新事项，Enter 保存...  (支持 /p1 周三前 预计2h)'}
+            placeholder={storageDisabled ? '无法存储数据，请检查浏览器设置' : '输入新事项，Enter 保存...  (支持 周三前 预计2h)'}
             disabled={storageDisabled}
             className={`flex-1 py-2 glass rounded-xl text-warm-800 dark:text-warm-200 placeholder-warm-400/60 dark:placeholder-warm-500/50 focus:outline-none transition-all text-sm bg-transparent ${
               storageDisabled ? 'opacity-50 cursor-not-allowed' : ''
@@ -178,7 +218,7 @@ export function QuickInput() {
 
       {/* Hint chips */}
       <div className="flex flex-wrap gap-1.5 mt-2">
-        {['/p1 优先级', '周三前', '预计2h'].map((hint) => (
+        {['周三前', '预计2h'].map((hint) => (
           <button
             key={hint}
             onClick={() => {

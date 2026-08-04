@@ -1,3 +1,5 @@
+import type { Quadrant } from '../types'
+
 export const PRESET_CATEGORY_LABELS: Record<string, string> = {
   study: '学习',
   work: '工作',
@@ -63,7 +65,12 @@ export const PRIORITY_LABELS: Record<string, string> = {
   P4: '不重要不紧急',
 }
 
-import type { Quadrant } from '../types'
+export const PRIORITY_CONFIG: Record<string, { emoji: string; label: string }> = {
+  P1: { emoji: '🔥', label: '紧急重要' },
+  P2: { emoji: '📋', label: '重要不紧急' },
+  P3: { emoji: '⚡', label: '紧急不重要' },
+  P4: { emoji: '🌿', label: '不重要不紧急' },
+}
 
 export const QUADRANT_PRIORITY_MAP: Record<string, Quadrant> = {
   P1: 'Q1',

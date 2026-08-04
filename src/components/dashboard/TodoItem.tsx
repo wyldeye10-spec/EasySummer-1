@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { Todo } from '../../types'
-import { getCategoryLabel, getCategoryColors, PRIORITY_LABELS } from '../../constants'
+import type { Todo, Priority } from '../../types'
+import { getCategoryLabel, getCategoryColors, PRIORITY_LABELS, PRIORITY_CONFIG, QUADRANT_PRIORITY_MAP } from '../../constants'
 import { useSettingsStore } from '../../store/settingsStore'
 import { getRelativeDateDescription, isOverdue, getDaysUntil, formatDate } from '../../utils/date'
 import { SubTaskList } from './SubTaskList'
@@ -23,6 +23,8 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
   const [celebrate, setCelebrate] = useState(false)
   const [exiting, setExiting] = useState(false)
   const [showSubTasks, setShowSubTasks] = useState(false)
+  const [showPriorityMenu, setShowPriorityMenu] = useState(false)
+  const priorityMenuRef = useRef<HTMLDivElement>(null)
   const customCategories = useSettingsStore(s => s.settings.customCategories)
   const colors = getCategoryColors(todo.category, customCategories)
   const isCompleted = todo.status === 'completed'
@@ -72,15 +74,44 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
     setEditing(false)
   }
 
-  // Determine urgency-level styling based on dueDate days
-  const getUrgencyStyle = () => {
+  // Click-outside handler for priority popover
+  useEffect(() => {
+    if (!showPriorityMenu) return
+    const handler = (e: MouseEvent) => {
+      if (priorityMenuRef.current && !priorityMenuRef.current.contains(e.target as Node)) {
+        setShowPriorityMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [showPriorityMenu])
+
+  // Inline priority change — syncs both priority and quadrant
+  const handlePriorityChange = (newPriority: Priority) => {
+    onEdit(todo.id, { priority: newPriority, quadrant: QUADRANT_PRIORITY_MAP[newPriority] })
+    setShowPriorityMenu(false)
+  }
+
+  // Priority-aware urgency display — lower priority tones down due-date urgency
+  const getEffectiveUrgency = (): 'overdue' | 'urgent' | 'soon' | null => {
     if (!dueDateDays || dueDateDays === null) return null
+    // P4 (not important, not urgent): never show urgency card styling
+    if (todo.priority === 'P4') return null
+    // P3 (urgent but not important): only show overdue
+    if (todo.priority === 'P3') return overdue ? 'overdue' : null
+    // P2 (important but not urgent): overdue + urgent only
+    if (todo.priority === 'P2') {
+      if (overdue) return 'overdue'
+      if (dueDateDays <= 3) return 'urgent'
+      return null
+    }
+    // P1 (urgent and important): full urgency display
     if (overdue) return 'overdue'
     if (dueDateDays <= 3) return 'urgent'
     if (dueDateDays <= 7) return 'soon'
     return null
   }
-  const urgencyStyle = getUrgencyStyle()
+  const effectiveUrgency = getEffectiveUrgency()
 
   return (
     <div
@@ -95,11 +126,11 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
       } ${
         isCompleted
           ? 'opacity-50 bg-warm-100/50 border-warm-200/40'
-          : urgencyStyle === 'overdue'
+          : effectiveUrgency === 'overdue'
             ? 'ring-1 ring-red-300/60 bg-red-50/40 border-red-200/40'
-            : urgencyStyle === 'urgent'
+            : effectiveUrgency === 'urgent'
               ? 'ring-1 ring-red-200/40 bg-red-50/30 border-red-200/30'
-              : urgencyStyle === 'soon'
+              : effectiveUrgency === 'soon'
                 ? 'ring-1 ring-amber-200/40 bg-amber-50/30 border-amber-200/30'
                 : 'border-transparent hover:border-warm-200/80 bg-white/60 hover:bg-white'
       }`}
@@ -140,11 +171,11 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
         className={`relative mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
           isCompleted
             ? 'bg-emerald-400 border-emerald-400 text-white scale-90'
-            : urgencyStyle === 'overdue'
+            : effectiveUrgency === 'overdue'
               ? 'border-red-300 hover:border-red-400 hover:bg-red-50'
-              : urgencyStyle === 'urgent'
+              : effectiveUrgency === 'urgent'
                 ? 'border-red-200 hover:border-red-300 hover:bg-red-50'
-                : urgencyStyle === 'soon'
+                : effectiveUrgency === 'soon'
                   ? 'border-amber-300 hover:border-amber-400 hover:bg-amber-50'
                   : 'border-warm-300 hover:border-warm-400 hover:bg-warm-50 hover:scale-110'
         }`}
@@ -214,14 +245,50 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
             </span>
           )}
 
-          {/* Priority */}
-          <span className={`text-xs font-medium ${
-            todo.priority === 'P1' ? 'text-red-500' :
-            todo.priority === 'P2' ? 'text-study-600' :
-            'text-warm-500'
-          }`}>
-            {PRIORITY_LABELS[todo.priority]}
-          </span>
+          {/* Priority — clickable for inline editing */}
+          <div className="relative" ref={priorityMenuRef}>
+            <button
+              onClick={() => !isCompleted && setShowPriorityMenu(!showPriorityMenu)}
+              disabled={isCompleted}
+              className={`text-xs font-medium px-1.5 py-0.5 rounded-md transition-all ${
+                isCompleted ? 'cursor-default' : 'cursor-pointer hover:ring-1 hover:ring-warm-300/60 hover:shadow-sm'
+              } ${
+                todo.priority === 'P1' ? 'text-red-500 bg-red-50/60 dark:bg-red-900/20' :
+                todo.priority === 'P2' ? 'text-study-600 bg-study-50/60 dark:bg-study-900/20' :
+                todo.priority === 'P3' ? 'text-amber-600 bg-amber-50/60 dark:bg-amber-900/20' :
+                'text-warm-500 bg-warm-100/60 dark:bg-warm-800/40'
+              }`}
+              title={isCompleted ? '' : '点击修改优先级'}
+            >
+              {PRIORITY_LABELS[todo.priority]}
+            </button>
+
+            {/* Priority popover dropdown */}
+            {showPriorityMenu && !isCompleted && (
+              <div className="absolute bottom-full left-0 mb-1 z-50 bg-white dark:bg-warm-800 rounded-xl shadow-xl border border-warm-200/60 dark:border-warm-700/60 p-1.5 min-w-[150px] animate-scale-in">
+                {(Object.entries(PRIORITY_CONFIG) as [Priority, { emoji: string; label: string }][]).map(([p, cfg]) => (
+                  <button
+                    key={p}
+                    onClick={() => handlePriorityChange(p)}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                      todo.priority === p
+                        ? 'bg-warm-200/60 dark:bg-warm-700/60'
+                        : 'hover:bg-warm-100 dark:hover:bg-warm-700/40'
+                    } ${
+                      p === 'P1' ? 'text-red-600 dark:text-red-400' :
+                      p === 'P2' ? 'text-study-600 dark:text-study-400' :
+                      p === 'P3' ? 'text-amber-600 dark:text-amber-400' :
+                      'text-warm-600 dark:text-warm-400'
+                    }`}
+                  >
+                    <span className="text-sm">{cfg.emoji}</span>
+                    <span>{cfg.label}</span>
+                    {todo.priority === p && <span className="ml-auto text-xs">✓</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Tags */}
           {todo.tags.map(tag => (

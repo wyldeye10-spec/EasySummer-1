@@ -5,7 +5,7 @@ import { getGreeting } from '../../utils/date'
 
 export function TopBar() {
   const mode = useUIStore(s => s.mode)
-  const toggleMode = useUIStore(s => s.toggleMode)
+  const setMode = useUIStore(s => s.setMode)
   const darkMode = useUIStore(s => s.darkMode)
   const toggleDarkMode = useUIStore(s => s.toggleDarkMode)
   const quotes = useSettingsStore(s => s.settings.motivationalQuotes)
@@ -55,14 +55,16 @@ export function TopBar() {
           {/* Mode Toggle with animated slider */}
           <div className="flex bg-warm-200/60 rounded-xl p-0.5 relative">
             <div
-              className={`absolute top-0.5 bottom-0.5 w-[calc(50%-2px)] rounded-lg transition-all duration-300 ease-out ${
+              className={`absolute top-0.5 bottom-0.5 w-[calc(33.33%-3px)] rounded-lg transition-all duration-300 ease-out ${
                 mode === 'study'
                   ? 'left-0.5 bg-gradient-to-br from-study-400 to-study-500 shadow-md'
-                  : 'left-[calc(50%+1.5px)] bg-gradient-to-br from-work-400 to-work-500 shadow-md'
+                  : mode === 'work'
+                    ? 'left-[calc(33.33%+0.5px)] bg-gradient-to-br from-work-400 to-work-500 shadow-md'
+                    : 'left-[calc(66.67%+1.5px)] bg-gradient-to-br from-other-400 to-other-500 shadow-md'
               }`}
             />
             <button
-              onClick={() => toggleMode()}
+              onClick={() => setMode('study')}
               className={`relative px-3 py-1.5 text-sm rounded-lg transition-colors duration-300 z-10 ${
                 mode === 'study' ? 'text-white font-medium' : 'text-warm-500'
               }`}
@@ -70,12 +72,20 @@ export function TopBar() {
               📚 学习
             </button>
             <button
-              onClick={() => toggleMode()}
+              onClick={() => setMode('work')}
               className={`relative px-3 py-1.5 text-sm rounded-lg transition-colors duration-300 z-10 ${
                 mode === 'work' ? 'text-white font-medium' : 'text-warm-500'
               }`}
             >
               💼 工作
+            </button>
+            <button
+              onClick={() => setMode('other')}
+              className={`relative px-3 py-1.5 text-sm rounded-lg transition-colors duration-300 z-10 ${
+                mode === 'other' ? 'text-white font-medium' : 'text-warm-500'
+              }`}
+            >
+              🌿 其他
             </button>
           </div>
 

@@ -16,6 +16,7 @@ interface TodoStore {
   restoreTodo: (id: string) => Promise<void>
   permanentlyDeleteTodo: (id: string) => Promise<void>
   cleanupTrash: () => Promise<number>
+  importTodos: (todos: Todo[]) => Promise<void>
   reorderTodos: (activeId: string, overId: string) => Promise<void>
   moveToQuadrant: (id: string, quadrant: Quadrant) => Promise<void>
 
@@ -98,6 +99,12 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
     // Reload to get accurate state
     await get().loadTodos()
     return count
+  },
+
+  importTodos: async (importedTodos: Todo[]) => {
+    await ops.bulkImportTodos(importedTodos)
+    // Reload to get accurate merged state
+    await get().loadTodos()
   },
 
   reorderTodos: async (activeId, overId) => {

@@ -40,8 +40,9 @@ let toastId = 0
 export const useUIStore = create<UIStore>((set, get) => ({
   mode: 'study',
   toggleMode: () => {
-    const next = get().mode === 'study' ? 'work' : 'study'
-    set({ mode: next })
+    const current = get().mode
+    const next: Record<string, AppMode> = { study: 'work', work: 'other', other: 'study' }
+    set({ mode: next[current] })
   },
   setMode: (mode) => set({ mode }),
 

@@ -95,6 +95,10 @@ export async function permanentlyDeleteTodo(id: string): Promise<void> {
   await db.todos.delete(id)
 }
 
+export async function bulkImportTodos(todos: Todo[]): Promise<void> {
+  await db.todos.bulkPut(todos)
+}
+
 export async function cleanupExpiredTrash(daysThreshold: number = 30): Promise<number> {
   const threshold = new Date()
   threshold.setDate(threshold.getDate() - daysThreshold)

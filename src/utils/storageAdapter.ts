@@ -97,6 +97,15 @@ export async function lsPermanentlyDeleteTodo(id: string): Promise<void> {
   writeTodos(todos)
 }
 
+export async function lsBulkImportTodos(importedTodos: Todo[]): Promise<void> {
+  const existingTodos = readTodos()
+  const existingIds = new Set(existingTodos.map(t => t.id))
+  // Merge: overwrite existing todos with matching IDs, append new ones
+  const merged = existingTodos.filter(t => !importedTodos.some(it => it.id === t.id))
+  merged.push(...importedTodos)
+  writeTodos(merged)
+}
+
 export async function lsCleanupTrash(daysThreshold: number = 30): Promise<number> {
   const threshold = new Date()
   threshold.setDate(threshold.getDate() - daysThreshold)

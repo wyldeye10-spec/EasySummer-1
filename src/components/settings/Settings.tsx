@@ -3,11 +3,12 @@ import { useSettingsStore } from '../../store/settingsStore'
 import { useTodoStore } from '../../store/todoStore'
 import { CATEGORY_LABELS, CATEGORY_COLORS } from '../../constants'
 import { exportAsJSON, downloadFile } from '../../utils/export'
-import type { Category } from '../../types'
+import type { Category, Todo, UserSettings } from '../../types'
 
 export function Settings() {
   const { settings, update, reset } = useSettingsStore()
   const todos = useTodoStore(s => s.todos)
+  const importTodos = useTodoStore(s => s.importTodos)
   const [saveLabel, setSaveLabel] = useState('')
 
   const handlePomodoroChange = (val: number) => {
@@ -42,9 +43,33 @@ export function Settings() {
       if (!file) return
       try {
         const text = await file.text()
-        JSON.parse(text)
-        setSaveLabel('已导入 ✓')
-        setTimeout(() => setSaveLabel(''), 2000)
+        const data = JSON.parse(text)
+
+        // Validate structure
+        if (!data || typeof data !== 'object') {
+          alert('导入失败：文件格式不正确')
+          return
+        }
+
+        let importedCount = 0
+
+        // Import settings
+        if (data.settings && typeof data.settings === 'object') {
+          await update(data.settings as Partial<UserSettings>)
+        }
+
+        // Import todos
+        if (Array.isArray(data.todos) && data.todos.length > 0) {
+          await importTodos(data.todos as Todo[])
+          importedCount = data.todos.length
+        }
+
+        if (importedCount > 0 || data.settings) {
+          setSaveLabel(`已导入 ${importedCount > 0 ? `${importedCount} 条事项` : ''}${importedCount > 0 && data.settings ? ' + ' : ''}${data.settings ? '设置' : ''} ✓`)
+        } else {
+          setSaveLabel('未找到可导入的数据')
+        }
+        setTimeout(() => setSaveLabel(''), 3000)
       } catch {
         alert('导入失败：文件格式不正确')
       }
