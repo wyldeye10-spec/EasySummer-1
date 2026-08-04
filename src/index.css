@@ -334,6 +334,35 @@
   }
 }
 
+/* ============ Deadline Urgency States ============ */
+
+.urgency-overdue {
+  background: rgba(224, 64, 64, 0.08);
+  border-color: rgba(224, 64, 64, 0.25);
+}
+.urgency-overdue:hover {
+  background: rgba(224, 64, 64, 0.12);
+  border-color: rgba(224, 64, 64, 0.35);
+}
+
+.urgency-urgent {
+  background: rgba(200, 80, 80, 0.06);
+  border-color: rgba(200, 80, 80, 0.18);
+}
+.urgency-urgent:hover {
+  background: rgba(200, 80, 80, 0.1);
+  border-color: rgba(200, 80, 80, 0.28);
+}
+
+.urgency-soon {
+  background: rgba(217, 119, 6, 0.06);
+  border-color: rgba(217, 119, 6, 0.18);
+}
+.urgency-soon:hover {
+  background: rgba(217, 119, 6, 0.1);
+  border-color: rgba(217, 119, 6, 0.28);
+}
+
 /* ============ Dark Mode Overrides ============ */
 
 .dark body {
@@ -452,6 +481,32 @@
 .dark .text-study-500 { color: #7eb8da; }
 .dark .text-study-600 { color: #6ea8ca; }
 .dark .text-study-700 { color: #5e98ba; }
+
+/* Dark mode urgency states */
+.dark .urgency-overdue {
+  background: rgba(224, 64, 64, 0.14);
+  border-color: rgba(224, 64, 64, 0.3);
+}
+.dark .urgency-urgent {
+  background: rgba(200, 80, 80, 0.1);
+  border-color: rgba(200, 80, 80, 0.22);
+}
+.dark .urgency-soon {
+  background: rgba(217, 119, 6, 0.1);
+  border-color: rgba(217, 119, 6, 0.22);
+}
+
+/* Dark mode deadline urgency supplementary colors */
+.dark .bg-amber-50\/30 { background-color: rgba(60, 40, 10, 0.25); }
+.dark .bg-red-50\/30 { background-color: rgba(80, 20, 20, 0.3); }
+.dark .hover\:bg-amber-50:hover { background-color: #2a2010; }
+.dark .text-amber-500 { color: #e0a030; }
+.dark .ring-red-200\/40 { --tw-ring-color: rgba(120, 30, 30, 0.35); }
+.dark .ring-amber-200\/40 { --tw-ring-color: rgba(80, 55, 15, 0.35); }
+.dark .border-red-200\/30 { border-color: rgba(80, 30, 30, 0.3); }
+.dark .border-amber-200\/30 { border-color: rgba(80, 55, 15, 0.25); }
+.dark .border-amber-200\/40 { border-color: rgba(80, 55, 15, 0.35); }
+
 .dark .\? { /* placeholder */ }
 
 /* Quadrant gradient backgrounds in dark mode */

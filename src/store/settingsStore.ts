@@ -19,9 +19,9 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
   load: async () => {
     const saved = await ops.getSettings()
     if (saved) {
-      set({ settings: saved, loaded: true })
+      // Merge with defaults to backfill any new fields added in newer versions
+      set({ settings: { ...DEFAULT_SETTINGS, ...saved }, loaded: true })
     } else {
-      // Initialize with defaults
       await ops.saveSettings({ ...DEFAULT_SETTINGS, id: 'user-settings' })
       set({ settings: { ...DEFAULT_SETTINGS }, loaded: true })
     }

@@ -69,6 +69,9 @@ export function AppLayout() {
           <NavLink to="/journal" className={navLinkClass}>
             📓 月志
           </NavLink>
+          <NavLink to="/overview" className={navLinkClass}>
+            📊 概况
+          </NavLink>
           <NavLink to="/trash" className={navLinkClass}>
             🗑️ 回收站
           </NavLink>
@@ -92,6 +95,7 @@ export function AppLayout() {
         <NavLink to="/" end className={navLinkClass}>🏠</NavLink>
         <NavLink to="/quadrant" className={navLinkClass}>📐</NavLink>
         <NavLink to="/journal" className={navLinkClass}>📓</NavLink>
+        <NavLink to="/overview" className={navLinkClass}>📊</NavLink>
         <NavLink to="/settings" className={navLinkClass}>⚙️</NavLink>
       </nav>
 

@@ -52,3 +52,13 @@ export function getGreeting(): string {
   if (hour < 22) return '晚上好 🌆'
   return '夜深了，注意休息 🌙'
 }
+
+// ============ 截止日期工具 ============
+
+/** Returns positive if future, negative if past, 0 if today. */
+export function getDaysUntil(dateStr: string): number {
+  const target = new Date(dateStr + 'T00:00:00')
+  const now = new Date(new Date().toISOString().split('T')[0] + 'T00:00:00')
+  const diffMs = target.getTime() - now.getTime()
+  return Math.round(diffMs / (1000 * 60 * 60 * 24))
+}

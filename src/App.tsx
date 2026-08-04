@@ -6,6 +6,7 @@ import { QuadrantView } from './components/quadrant/quadrantView'
 import { MonthlyJournal } from './components/journal/MonthlyJournal'
 import { Settings } from './components/settings/Settings'
 import { Trash } from './components/settings/Trash'
+import { Overview } from './components/overview/Overview'
 import { DailySummaryModal } from './components/dashboard/DailySummaryModal'
 import { useDailySummary } from './hooks/useDailySummary'
 
@@ -38,6 +39,7 @@ export default function App() {
             <Route path="/quadrant" element={<QuadrantView />} />
             <Route path="/journal" element={<MonthlyJournal />} />
             <Route path="/journal/:year/:month" element={<MonthlyJournal />} />
+            <Route path="/overview" element={<Overview />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/trash" element={<Trash />} />
           </Route>

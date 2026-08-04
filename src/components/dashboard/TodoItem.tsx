@@ -4,7 +4,7 @@ import { CSS } from '@dnd-kit/utilities'
 import type { Todo } from '../../types'
 import { getCategoryLabel, getCategoryColors, PRIORITY_LABELS } from '../../constants'
 import { useSettingsStore } from '../../store/settingsStore'
-import { getRelativeDateDescription, isOverdue } from '../../utils/date'
+import { getRelativeDateDescription, isOverdue, getDaysUntil, formatDate } from '../../utils/date'
 import { SubTaskList } from './SubTaskList'
 
 interface Props {
@@ -28,7 +28,9 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
   const isCompleted = todo.status === 'completed'
   const isPending = todo.status === 'pending'
   const isParent = !todo.parentId
-  const overdue = todo.dueDate && !isCompleted && isOverdue(todo.dueDate)
+  const hasDueDate = !!todo.dueDate
+  const overdue = hasDueDate && !isCompleted && isOverdue(todo.dueDate!)
+  const dueDateDays = hasDueDate && !isCompleted ? getDaysUntil(todo.dueDate!) : null
 
   // Sortable only for pending items
   const {
@@ -70,6 +72,16 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
     setEditing(false)
   }
 
+  // Determine urgency-level styling based on dueDate days
+  const getUrgencyStyle = () => {
+    if (!dueDateDays || dueDateDays === null) return null
+    if (overdue) return 'overdue'
+    if (dueDateDays <= 3) return 'urgent'
+    if (dueDateDays <= 7) return 'soon'
+    return null
+  }
+  const urgencyStyle = getUrgencyStyle()
+
   return (
     <div
       ref={setNodeRef}
@@ -83,9 +95,13 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
       } ${
         isCompleted
           ? 'opacity-50 bg-warm-100/50 border-warm-200/40'
-          : overdue
+          : urgencyStyle === 'overdue'
             ? 'ring-1 ring-red-300/60 bg-red-50/40 border-red-200/40'
-            : 'border-transparent hover:border-warm-200/80 bg-white/60 hover:bg-white'
+            : urgencyStyle === 'urgent'
+              ? 'ring-1 ring-red-200/40 bg-red-50/30 border-red-200/30'
+              : urgencyStyle === 'soon'
+                ? 'ring-1 ring-amber-200/40 bg-amber-50/30 border-amber-200/30'
+                : 'border-transparent hover:border-warm-200/80 bg-white/60 hover:bg-white'
       }`}
     >
       {/* Drag handle — only for pending items */}
@@ -124,9 +140,13 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
         className={`relative mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
           isCompleted
             ? 'bg-emerald-400 border-emerald-400 text-white scale-90'
-            : overdue
+            : urgencyStyle === 'overdue'
               ? 'border-red-300 hover:border-red-400 hover:bg-red-50'
-              : 'border-warm-300 hover:border-warm-400 hover:bg-warm-50 hover:scale-110'
+              : urgencyStyle === 'urgent'
+                ? 'border-red-200 hover:border-red-300 hover:bg-red-50'
+                : urgencyStyle === 'soon'
+                  ? 'border-amber-300 hover:border-amber-400 hover:bg-amber-50'
+                  : 'border-warm-300 hover:border-warm-400 hover:bg-warm-50 hover:scale-110'
         }`}
       >
         {isCompleted && (
@@ -157,9 +177,22 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
             onDoubleClick={() => !isCompleted && setEditing(true)}
           >
             {todo.title}
-            {overdue && (
-              <span className="ml-2 text-xs text-red-400 font-medium animate-pulse-soft">
-                ⚠ 已过期
+            {/* Due date warning label */}
+            {!isCompleted && hasDueDate && (
+              <span className={`ml-2 text-xs font-medium ${
+                overdue
+                  ? 'text-red-400 animate-pulse-soft'
+                  : dueDateDays !== null && dueDateDays <= 3
+                    ? 'text-red-400'
+                    : dueDateDays !== null && dueDateDays <= 7
+                      ? 'text-amber-500'
+                      : 'text-warm-400'
+              }`}>
+                {overdue
+                  ? '⚠ 已过期'
+                  : dueDateDays !== null && dueDateDays <= 7
+                    ? `${dueDateDays === 0 ? '⏰ 今天到期' : `⏰ ${dueDateDays}天后到期`}`
+                    : `📅 ${formatDate(todo.dueDate!)}`}
               </span>
             )}
           </div>
@@ -197,13 +230,16 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
             </span>
           ))}
 
-          {/* Due date */}
-          {todo.dueDate && (
+          {/* Due date — compact display */}
+          {hasDueDate && (
             <span className={`text-xs flex items-center gap-1 ${
-              overdue ? 'text-red-400 font-medium' : 'text-warm-400'
+              overdue ? 'text-red-400 font-medium' :
+              dueDateDays !== null && dueDateDays <= 3 ? 'text-red-400' :
+              dueDateDays !== null && dueDateDays <= 7 ? 'text-amber-500' :
+              'text-warm-400'
             }`}>
               <span className="text-[10px]">📅</span>
-              {getRelativeDateDescription(todo.dueDate)}
+              {getRelativeDateDescription(todo.dueDate!)}
             </span>
           )}
 
