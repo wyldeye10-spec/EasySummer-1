@@ -18,12 +18,14 @@ interface DayCell {
 
 const DAY_LABELS = ['一', '二', '三', '四', '五', '六', '日']
 
-function getHeatColor(count: number): string {
+function getHeatColor(count: number, maxCount: number): string {
   if (count === 0) return 'bg-warm-100/60 dark:bg-warm-800/40'
-  if (count <= 2) return 'bg-warm-300/60 dark:bg-warm-600/60'
-  if (count <= 5) return 'bg-warm-400/70 dark:bg-warm-500/70'
-  if (count <= 8) return 'bg-warm-500/80 dark:bg-warm-400/80'
-  return 'bg-warm-600/90 dark:bg-warm-300/90'
+  // Relative to this month's range — the busiest day is always darkest
+  const ratio = maxCount > 0 ? count / maxCount : 0
+  if (ratio <= 0.25) return 'bg-warm-200/70 dark:bg-warm-700/50'
+  if (ratio <= 0.5)  return 'bg-warm-300/70 dark:bg-warm-600/60'
+  if (ratio <= 0.75) return 'bg-warm-400/80 dark:bg-warm-500/70'
+  return 'bg-warm-500/90 dark:bg-warm-300/90'
 }
 
 export function HeatmapCalendar({ year, month, todos }: Props) {
@@ -89,16 +91,16 @@ export function HeatmapCalendar({ year, month, todos }: Props) {
   return (
     <div className="space-y-1">
       {/* Day labels header */}
-      <div className="flex gap-1">
+      <div className="flex gap-1.5">
         {/* Offset for the label column space */}
         {weeks.length > 0 && weeks[0].some(c => !c.isCurrentMonth) && (
           <div className="w-5" />
         )}
-        <div className="flex gap-1 flex-1">
+        <div className="flex gap-1.5 flex-1">
           {DAY_LABELS.map(label => (
             <div
               key={label}
-              className="flex-1 text-center text-[10px] text-warm-400 font-medium"
+              className="flex-1 text-center text-xs text-warm-400 font-medium"
             >
               {label}
             </div>
@@ -107,9 +109,9 @@ export function HeatmapCalendar({ year, month, todos }: Props) {
       </div>
 
       {/* Heatmap grid */}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1.5">
         {weeks.map((week, wi) => (
-          <div key={wi} className="flex gap-1">
+          <div key={wi} className="flex gap-1.5">
             {week.map((cell, ci) => {
               if (!cell.isCurrentMonth) {
                 return <div key={`empty-${ci}`} className="flex-1 aspect-square" />
@@ -117,11 +119,11 @@ export function HeatmapCalendar({ year, month, todos }: Props) {
               return (
                 <div
                   key={cell.date}
-                  className={`flex-1 aspect-square rounded-md flex items-center justify-center text-[10px] font-medium transition-all duration-200 hover:scale-125 hover:z-10 relative group ${
+                  className={`flex-1 aspect-square rounded-md flex items-center justify-center text-[11px] font-medium transition-all duration-200 hover:scale-125 hover:z-10 relative group ring-1 ring-warm-300/20 dark:ring-warm-500/15 ${
                     cell.isToday
-                      ? 'ring-2 ring-warm-500 ring-offset-1 dark:ring-offset-warm-900'
+                      ? '!ring-2 !ring-warm-500 ring-offset-1 dark:ring-offset-warm-900'
                       : ''
-                  } ${getHeatColor(cell.count)}`}
+                  } ${getHeatColor(cell.count, maxCount)}`}
                   title={`${cell.date}: ${cell.count} 项完成`}
                 >
                   <span className={`${
@@ -148,7 +150,7 @@ export function HeatmapCalendar({ year, month, todos }: Props) {
         {[0, 1, 3, 6, 9].map(count => (
           <div
             key={count}
-            className={`w-3 h-3 rounded-sm ${getHeatColor(count)}`}
+            className={`w-3 h-3 rounded-sm ${getHeatColor(count, 9)}`}
           />
         ))}
         <span className="text-[10px] text-warm-400">多</span>

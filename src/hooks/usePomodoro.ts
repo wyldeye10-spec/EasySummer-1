@@ -29,6 +29,11 @@ export function usePomodoro() {
     if (intervalRef.current) clearInterval(intervalRef.current)
   }, [minutes])
 
+  const finishEarly = useCallback(() => {
+    setState('finished')
+    if (intervalRef.current) clearInterval(intervalRef.current)
+  }, [])
+
   const tick = useCallback(() => {
     setSecondsLeft(prev => {
       if (prev <= 1) {
@@ -62,5 +67,6 @@ export function usePomodoro() {
     pause,
     resume,
     reset,
+    finishEarly,
   }
 }

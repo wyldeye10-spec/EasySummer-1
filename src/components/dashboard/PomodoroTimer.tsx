@@ -11,7 +11,7 @@ export function PomodoroTimer() {
   const updateTodo = useTodoStore(s => s.updateTodo)
   const addToast = useUIStore(s => s.addToast)
   const darkMode = useUIStore(s => s.darkMode)
-  const { state, displayMinutes, displaySeconds, progress, start, pause, resume, reset } =
+  const { state, displayMinutes, displaySeconds, progress, start, pause, resume, reset, finishEarly } =
     usePomodoro()
   const [pulse, setPulse] = useState(false)
   const [showLogTime, setShowLogTime] = useState(false)
@@ -19,6 +19,7 @@ export function PomodoroTimer() {
   const [logMinutes, setLogMinutes] = useState(minutes)
   const [confettiActive, setConfettiActive] = useState(false)
   const confettiPieces = useRef<Array<{ angle: number; dist: number; delay: number; color: string; size: number }>>([])
+  const isEarlySettlement = useRef(false)
 
   const pendingTodos = useMemo(
     () => todos.filter(t => t.status === 'pending' && !t.parentId),
@@ -28,7 +29,10 @@ export function PomodoroTimer() {
   useEffect(() => {
     if (state === 'finished') {
       setPulse(true)
-      setLogMinutes(minutes)
+      if (!isEarlySettlement.current) {
+        setLogMinutes(minutes)
+      }
+      isEarlySettlement.current = false
       setShowLogTime(true)
       const t = setTimeout(() => setPulse(false), 2000)
 
@@ -69,6 +73,15 @@ export function PomodoroTimer() {
   const handleSkip = () => {
     setShowLogTime(false)
     setSelectedTodoId('')
+  }
+
+  const handleFinishEarly = () => {
+    const totalSeconds = minutes * 60
+    const elapsed = totalSeconds - (displayMinutes * 60 + displaySeconds)
+    const elapsedMinutes = Math.max(1, Math.ceil(elapsed / 60))
+    setLogMinutes(elapsedMinutes)
+    isEarlySettlement.current = true
+    finishEarly()
   }
 
   if (mode !== 'study') return null
@@ -242,6 +255,13 @@ export function PomodoroTimer() {
               >
                 重置
               </button>
+              <button
+                onClick={handleFinishEarly}
+                className="px-3 py-1.5 bg-warm-100/80 dark:bg-warm-800/40 text-warm-500 dark:text-warm-500 rounded-lg text-xs font-medium hover:bg-warm-200 dark:hover:bg-warm-700 hover:text-warm-600 dark:hover:text-warm-400 transition-all active:scale-95 border border-warm-200/40 dark:border-warm-700/30"
+                title="提前结算，记录已用时间"
+              >
+                ☕ 小憩
+              </button>
             </>
           )}
           {state === 'finished' && (
@@ -268,21 +288,8 @@ export function PomodoroTimer() {
               🍅 番茄钟完成！
             </h3>
             <p className="text-sm text-warm-500 dark:text-warm-400 mb-4">
-              太棒了！要记录这次学习时间吗？
+              本次学习 <span className="font-bold text-warm-700 dark:text-warm-200">{logMinutes}</span> 分钟，要关联到哪个事项？
             </p>
-
-            {/* Minutes input */}
-            <label className="block text-xs font-medium text-warm-600 dark:text-warm-400 mb-1">
-              时长（分钟）
-            </label>
-            <input
-              type="number"
-              value={logMinutes}
-              onChange={e => setLogMinutes(Math.max(1, parseInt(e.target.value) || 0))}
-              className="w-full px-3 py-2 mb-3 bg-warm-50/50 dark:bg-warm-800/50 border border-warm-200/60 dark:border-warm-700/40 rounded-xl text-sm text-warm-700 dark:text-warm-200 focus:outline-none focus:ring-2 focus:ring-warm-300/30"
-              min={1}
-              max={240}
-            />
 
             {/* Link to todo */}
             <label className="block text-xs font-medium text-warm-600 dark:text-warm-400 mb-1">

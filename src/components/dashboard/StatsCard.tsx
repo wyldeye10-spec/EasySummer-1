@@ -46,7 +46,7 @@ export function StatsCard() {
 
   return (
     <div className="glass rounded-2xl border border-warm-200/60 p-5 hover-lift">
-      <h3 className="text-sm font-medium text-warm-600 mb-4">📊 今日统计</h3>
+      <h3 className="text-sm font-medium text-warm-600 dark:text-warm-300 mb-4">📊 今日统计</h3>
 
       {/* Big numbers */}
       <div className="flex items-center gap-6 mb-4">
@@ -54,35 +54,35 @@ export function StatsCard() {
           <div className="text-4xl font-extrabold gradient-text tabular-nums">
             {stats.todayCompleted}
           </div>
-          <div className="text-xs text-warm-500 mt-0.5">今日完成</div>
+          <div className="text-xs text-warm-500 dark:text-warm-400 mt-0.5">今日完成</div>
         </div>
-        <div className="w-px h-10 bg-warm-200" />
+        <div className="w-px h-10 bg-warm-200 dark:bg-warm-700" />
         <div className="text-center flex-1">
-          <div className="text-4xl font-extrabold text-warm-800 tabular-nums">
+          <div className="text-4xl font-extrabold text-warm-800 dark:text-warm-200 tabular-nums">
             {stats.totalPending}
           </div>
-          <div className="text-xs text-warm-500 mt-0.5">待完成</div>
+          <div className="text-xs text-warm-500 dark:text-warm-400 mt-0.5">待完成</div>
         </div>
       </div>
 
       {/* Week trend bars */}
       <div className="mb-3">
-        <div className="text-xs text-warm-500 mb-2">本周趋势</div>
+        <div className="text-xs text-warm-500 dark:text-warm-400 mb-2">本周趋势</div>
         <div className="flex items-end justify-between gap-1 h-12">
           {stats.weekData.map((d, i) => (
             <div key={i} className="flex flex-col items-center gap-1 flex-1">
               <div
                 className={`w-full rounded-t-md transition-all duration-500 ${
                   d.count > 0
-                    ? 'bg-gradient-to-t from-warm-400 to-warm-300'
-                    : 'bg-warm-150'
+                    ? 'bg-gradient-to-t from-warm-400 dark:from-warm-500 to-warm-300 dark:to-warm-400'
+                    : 'bg-warm-150 dark:bg-warm-800/40'
                 }`}
                 style={{
                   height: `${Math.max((d.count / stats.maxWeek) * 100, d.count > 0 ? 8 : 3)}%`,
                   minHeight: '3px',
                 }}
               />
-              <span className="text-[10px] text-warm-400">{d.day}</span>
+              <span className="text-[10px] text-warm-400 dark:text-warm-500">{d.day}</span>
             </div>
           ))}
         </div>
@@ -90,11 +90,11 @@ export function StatsCard() {
 
       {/* Streak badge */}
       {stats.streak > 0 && (
-        <div className="flex items-center gap-2 p-2.5 bg-gradient-to-r from-warm-100 to-transparent rounded-xl">
+        <div className="flex items-center gap-2 p-2.5 bg-gradient-to-r from-warm-100 dark:from-warm-800/60 to-transparent dark:to-warm-900/40 rounded-xl">
           <span className="text-lg">🔥</span>
           <div>
-            <div className="text-xs font-bold text-warm-700">连续 {stats.streak} 天</div>
-            <div className="text-[10px] text-warm-500">保持好习惯！</div>
+            <div className="text-xs font-bold text-warm-700 dark:text-warm-200">连续 {stats.streak} 天</div>
+            <div className="text-[10px] text-warm-500 dark:text-warm-400">保持好习惯！</div>
           </div>
         </div>
       )}
