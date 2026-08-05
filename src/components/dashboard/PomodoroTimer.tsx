@@ -3,6 +3,7 @@ import { usePomodoro } from '../../hooks/usePomodoro'
 import { useUIStore } from '../../store/uiStore'
 import { useTodoStore } from '../../store/todoStore'
 import { useSettingsStore } from '../../store/settingsStore'
+import { notifyTimerComplete } from '../../utils/notification'
 
 export function PomodoroTimer() {
   const mode = useUIStore(s => s.mode)
@@ -20,11 +21,21 @@ export function PomodoroTimer() {
   const [confettiActive, setConfettiActive] = useState(false)
   const confettiPieces = useRef<Array<{ angle: number; dist: number; delay: number; color: string; size: number }>>([])
   const isEarlySettlement = useRef(false)
+  const titleFlashRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const pendingTodos = useMemo(
     () => todos.filter(t => t.status === 'pending' && !t.parentId),
     [todos]
   )
+
+  // Stop title flash
+  const stopTitleFlash = () => {
+    if (titleFlashRef.current) {
+      clearInterval(titleFlashRef.current)
+      titleFlashRef.current = null
+      document.title = '暑期规划'
+    }
+  }
 
   useEffect(() => {
     if (state === 'finished') {
@@ -35,6 +46,19 @@ export function PomodoroTimer() {
       isEarlySettlement.current = false
       setShowLogTime(true)
       const t = setTimeout(() => setPulse(false), 2000)
+
+      // Sound + browser notification
+      notifyTimerComplete(logMinutes || minutes)
+
+      // Title flash: alternate "🔔 时间到！" every 1s
+      const originalTitle = document.title
+      let flash = true
+      titleFlashRef.current = setInterval(() => {
+        document.title = flash ? '🔔 时间到！' : originalTitle
+        flash = !flash
+      }, 1000)
+      // Auto-stop after 30s
+      const tFlash = setTimeout(() => stopTitleFlash(), 30000)
 
       // Generate confetti particles
       const colors = darkMode
@@ -49,9 +73,14 @@ export function PomodoroTimer() {
       }))
       setConfettiActive(true)
       const t2 = setTimeout(() => setConfettiActive(false), 1500)
-      return () => { clearTimeout(t); clearTimeout(t2) }
+      return () => {
+        clearTimeout(t)
+        clearTimeout(t2)
+        clearTimeout(tFlash)
+        stopTitleFlash()
+      }
     }
-  }, [state, minutes, darkMode])
+  }, [state, minutes, darkMode, logMinutes])
 
   const handleLogTime = () => {
     if (selectedTodoId) {
@@ -68,11 +97,18 @@ export function PomodoroTimer() {
     }
     setShowLogTime(false)
     setSelectedTodoId('')
+    stopTitleFlash()
   }
 
   const handleSkip = () => {
     setShowLogTime(false)
     setSelectedTodoId('')
+    stopTitleFlash()
+  }
+
+  const handleReset = () => {
+    stopTitleFlash()
+    reset()
   }
 
   const handleFinishEarly = () => {
@@ -266,7 +302,7 @@ export function PomodoroTimer() {
           )}
           {state === 'finished' && (
             <button
-              onClick={reset}
+              onClick={handleReset}
               className="px-5 py-2 bg-gradient-to-br from-emerald-400 to-emerald-500 text-white rounded-xl text-sm font-medium hover:from-emerald-500 hover:to-emerald-600 transition-all shadow-md hover:shadow-lg active:scale-95 animate-bounce-gentle"
             >
               再来一个 🎉

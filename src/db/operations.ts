@@ -114,6 +114,16 @@ export async function cleanupExpiredTrash(daysThreshold: number = 30): Promise<n
   return expired.length
 }
 
+export async function emptyTrash(): Promise<number> {
+  const allDeleted = await db.todos
+    .where('status')
+    .equals('deleted')
+    .toArray()
+
+  await db.todos.bulkDelete(allDeleted.map(t => t.id))
+  return allDeleted.length
+}
+
 // ============ DailySummary CRUD ============
 
 export async function getDailySummary(date: string): Promise<DailySummary | undefined> {

@@ -116,6 +116,13 @@ export async function lsCleanupTrash(daysThreshold: number = 30): Promise<number
   return expired.length
 }
 
+export async function lsEmptyTrash(): Promise<number> {
+  const todos = readTodos()
+  const deleted = todos.filter(t => t.status === 'deleted')
+  writeTodos(todos.filter(t => t.status !== 'deleted'))
+  return deleted.length
+}
+
 // ============ DailySummary CRUD ============
 
 function readSummaries(): DailySummary[] {

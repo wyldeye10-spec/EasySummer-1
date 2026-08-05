@@ -47,6 +47,7 @@ export interface UserSettings {
   motivationalQuotes: string[]
   customCategories: { name: string; color: string }[]
   customTags: string[]
+  autoDarkMode: boolean
 }
 
 // ============ 输入解析结果 ============

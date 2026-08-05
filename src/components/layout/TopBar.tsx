@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useUIStore } from '../../store/uiStore'
 import { useSettingsStore } from '../../store/settingsStore'
 import { getGreeting } from '../../utils/date'
+import { useAutoDarkMode } from '../../hooks/useAutoDarkMode'
 
 export function TopBar() {
   const mode = useUIStore(s => s.mode)
@@ -23,20 +24,13 @@ export function TopBar() {
     } catch { /* ignore */ }
   }, [darkMode])
 
-  // Initialize from localStorage on mount
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('summer-planner-dark-mode')
-      if (saved === 'true' && !darkMode) {
-        toggleDarkMode()
-      }
-    } catch { /* ignore */ }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
   const today = new Date()
   const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`
   const weekday = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][today.getDay()]
   const randomQuote = quotes[Math.floor(Math.random() * quotes.length)]
+
+  // Auto dark mode
+  const { markUserOverride } = useAutoDarkMode()
 
   return (
     <header className="sticky top-0 z-30 glass-strong border-b border-warm-200/60 dark:bg-warm-900/85 dark:border-warm-700/40">
@@ -91,7 +85,10 @@ export function TopBar() {
 
           {/* Dark Mode */}
           <button
-            onClick={toggleDarkMode}
+            onClick={() => {
+              markUserOverride()
+              toggleDarkMode()
+            }}
             className="p-2 text-lg hover-lift rounded-xl transition-all"
             title={darkMode ? '切换日间模式' : '切换夜间模式'}
           >

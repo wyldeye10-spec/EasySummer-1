@@ -100,6 +100,11 @@ export async function cleanupExpiredTrash(daysThreshold: number = 30): Promise<n
   try { return await idb.cleanupExpiredTrash(daysThreshold) } catch { return ls.lsCleanupTrash(daysThreshold) }
 }
 
+export async function emptyTrash(): Promise<number> {
+  if (storageMode() === 'localstorage') return ls.lsEmptyTrash()
+  try { return await idb.emptyTrash() } catch { return ls.lsEmptyTrash() }
+}
+
 // ============ DailySummary CRUD ============
 
 export async function getDailySummary(date: string): Promise<DailySummary | undefined> {

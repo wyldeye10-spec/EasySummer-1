@@ -87,10 +87,10 @@ export function TodoList() {
               今日进度
             </span>
             <span className="text-xs font-bold text-warm-700 tabular-nums">
-              {todos.filter(t => t.status === 'completed').length}/{totalCount}
+              {todos.filter(t => t.status === 'completed' && !t.parentId && t.mode === mode).length}/{totalCount}
             </span>
           </div>
-          <div className="h-2 bg-warm-200/60 rounded-full overflow-hidden">
+          <div className="h-2 bg-warm-200/60 border border-warm-300/50 dark:border-warm-700/30 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-700 ease-out ${
                 completionRate === 100

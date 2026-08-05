@@ -66,13 +66,13 @@ export function SubTaskList({ parentTodo }: Props) {
         >
           <button
             onClick={() => handleToggle(sub)}
-            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+            className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all ${
               sub.status === 'completed'
-                ? 'bg-emerald-400 border-emerald-400 text-white'
-                : 'border-warm-300 dark:border-warm-600 hover:border-warm-400'
+                ? 'bg-emerald-400 border-emerald-400 text-white shadow-sm'
+                : 'border-warm-300 dark:border-warm-600 hover:border-study-400 hover:bg-study-50 dark:hover:bg-study-900/20'
             }`}
           >
-            {sub.status === 'completed' && <span className="text-[8px]">✓</span>}
+            {sub.status === 'completed' && <span className="text-[10px] font-bold leading-none">✓</span>}
           </button>
           <span className="flex-1">{sub.title}</span>
           <button

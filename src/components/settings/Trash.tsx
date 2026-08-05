@@ -13,18 +13,33 @@ export function Trash() {
   }, [])
 
   const deleted = todos.filter(t => t.status === 'deleted')
+  const emptyTrash = useTodoStore(s => s.emptyTrash)
+
+  const handleEmptyAll = () => {
+    if (confirm(`确定要永久删除回收站中的全部 ${deleted.length} 条事项吗？此操作不可撤销。`)) {
+      emptyTrash()
+    }
+  }
 
   return (
     <div className="space-y-4 max-w-2xl">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold gradient-text">🗑️ 回收站</h2>
         {deleted.length > 0 && (
-          <button
-            onClick={cleanupTrash}
-            className="px-3 py-1.5 text-xs font-medium bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-all active:scale-95"
-          >
-            清理过期 (30天)
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={cleanupTrash}
+              className="px-3 py-1.5 text-xs font-medium bg-warm-100/80 text-warm-600 rounded-xl hover:bg-warm-200 transition-all active:scale-95"
+            >
+              清理过期
+            </button>
+            <button
+              onClick={handleEmptyAll}
+              className="px-3 py-1.5 text-xs font-medium bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-all active:scale-95"
+            >
+              一键清空
+            </button>
+          </div>
         )}
       </div>
 

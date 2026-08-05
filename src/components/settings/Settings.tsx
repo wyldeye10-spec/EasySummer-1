@@ -124,6 +124,39 @@ export function Settings() {
         />
       </div>
 
+      {/* Auto Dark Mode */}
+      <div className="glass rounded-2xl border border-warm-200/60 p-5 hover-lift">
+        <h3 className="font-semibold text-warm-800 dark:text-warm-200 mb-3 flex items-center gap-2">
+          <span className="text-lg">🌓</span> 自动夜间模式
+        </h3>
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex-1">
+            <p className="text-sm text-warm-700 dark:text-warm-300">
+              每晚 19:00 自动切换为深色模式
+            </p>
+            <p className="text-xs text-warm-400 mt-1">
+              手动切换后保持当前偏好，刷新页面后恢复自动判断
+            </p>
+          </div>
+          <button
+            onClick={() => update({ autoDarkMode: !settings.autoDarkMode })}
+            role="switch"
+            aria-checked={settings.autoDarkMode}
+            className={`relative w-11 h-6 rounded-full transition-colors duration-200 flex-shrink-0 ${
+              settings.autoDarkMode
+                ? 'bg-warm-500'
+                : 'bg-warm-200 dark:bg-warm-700'
+            }`}
+          >
+            <div
+              className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${
+                settings.autoDarkMode ? 'translate-x-[22px]' : 'translate-x-0.5'
+              }`}
+            />
+          </button>
+        </div>
+      </div>
+
       {/* Motivational Quotes */}
       <div className="glass rounded-2xl border border-warm-200/60 p-5 hover-lift">
         <h3 className="font-semibold text-warm-800 mb-4 flex items-center gap-2">

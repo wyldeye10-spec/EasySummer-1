@@ -291,8 +291,15 @@
   animation: sway 20s ease-in-out 6s infinite;
 }
 
-/* Stripe progress bar */
+/* Stripe progress bar — uses ::after so it layers on top of the gradient background */
 .stripe-progress {
+  position: relative;
+}
+.stripe-progress::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
   background: repeating-linear-gradient(
     45deg,
     transparent,
@@ -543,9 +550,17 @@
 .dark .from-warm-50\/60 { --tw-gradient-from: rgba(26, 22, 18, 0.5); }
 .dark .to-stone-50\/30 { --tw-gradient-to: rgba(30, 28, 26, 0.25); }
 
-/* Heatmap empty cells in dark */
-.dark .bg-warm-100\/60 { background-color: rgba(34, 29, 24, 0.6); }
-.dark .bg-warm-800\/40 { background-color: rgba(110, 76, 40, 0.4); }
+/* Heatmap dark mode */
+.dark .bg-warm-100\/50 { background-color: rgba(34, 29, 24, 0.5); }
+.dark .bg-warm-800\/30 { background-color: rgba(110, 76, 40, 0.3); }
+.dark .bg-warm-200\/60 { background-color: rgba(55, 45, 35, 0.6); }
+.dark .bg-warm-700\/50 { background-color: rgba(85, 60, 35, 0.5); }
+.dark .bg-warm-300\/70 { background-color: rgba(80, 55, 35, 0.7); }
+.dark .bg-warm-600\/60 { background-color: rgba(100, 70, 40, 0.6); }
+.dark .bg-warm-400\/80 { background-color: rgba(115, 80, 45, 0.8); }
+.dark .bg-warm-500\/70 { background-color: rgba(135, 95, 55, 0.7); }
+.dark .bg-warm-500\/90 { background-color: rgba(135, 95, 55, 0.9); }
+.dark .bg-warm-400\/90 { background-color: rgba(200, 155, 110, 0.9); }
 
 /* Toast in dark mode */
 .dark .bg-warm-800 { background-color: #2d261f; }

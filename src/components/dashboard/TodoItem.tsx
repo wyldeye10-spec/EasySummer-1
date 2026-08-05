@@ -4,6 +4,7 @@ import { CSS } from '@dnd-kit/utilities'
 import type { Todo, Priority } from '../../types'
 import { getCategoryLabel, getCategoryColors, PRIORITY_LABELS, PRIORITY_CONFIG, QUADRANT_PRIORITY_MAP } from '../../constants'
 import { useSettingsStore } from '../../store/settingsStore'
+import { useTodoStore } from '../../store/todoStore'
 import { getRelativeDateDescription, isOverdue, getDaysUntil, formatDate } from '../../utils/date'
 import { SubTaskList } from './SubTaskList'
 
@@ -26,10 +27,17 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
   const [showPriorityMenu, setShowPriorityMenu] = useState(false)
   const priorityMenuRef = useRef<HTMLDivElement>(null)
   const customCategories = useSettingsStore(s => s.settings.customCategories)
+  const allTodos = useTodoStore(s => s.todos)
   const colors = getCategoryColors(todo.category, customCategories)
   const isCompleted = todo.status === 'completed'
   const isPending = todo.status === 'pending'
   const isParent = !todo.parentId
+
+  // Subtask counts for parent tasks
+  const subTodos = isParent ? allTodos.filter(t => t.parentId === todo.id && t.status !== 'deleted') : []
+  const subCount = subTodos.length
+  const subDone = subTodos.filter(t => t.status === 'completed').length
+  const subAllDone = subCount > 0 && subDone === subCount
   const hasDueDate = !!todo.dueDate
   const overdue = hasDueDate && !isCompleted && isOverdue(todo.dueDate!)
   const dueDateDays = hasDueDate && !isCompleted ? getDaysUntil(todo.dueDate!) : null
@@ -384,6 +392,17 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
           </div>
         )}
       </div>
+
+      {/* Subtask count badge — always visible */}
+      {isParent && subCount > 0 && (
+        <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full flex-shrink-0 ${
+          subAllDone
+            ? 'bg-emerald-100/80 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400'
+            : 'bg-warm-200/60 text-warm-500 dark:bg-warm-700/50 dark:text-warm-400'
+        }`}>
+          {showSubTasks ? `📋 ${subCount}` : `${subDone}/${subCount}`}
+        </span>
+      )}
 
       {/* Actions on hover */}
       <div className="hidden group-hover:flex items-center gap-1 flex-shrink-0 animate-fade-in">

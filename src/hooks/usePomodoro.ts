@@ -9,6 +9,13 @@ export function usePomodoro() {
   const [secondsLeft, setSecondsLeft] = useState(minutes * 60)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  // Sync secondsLeft when settings change (only when idle)
+  useEffect(() => {
+    if (state === 'idle') {
+      setSecondsLeft(minutes * 60)
+    }
+  }, [minutes, state])
+
   const start = useCallback(() => {
     setState('running')
     setSecondsLeft(minutes * 60)
