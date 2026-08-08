@@ -1,4 +1,4 @@
-import type { Quadrant } from '../types'
+import type { Quadrant, PresetCategory } from '../types'
 
 export const PRESET_CATEGORY_LABELS: Record<string, string> = {
   study: '学习',
@@ -13,6 +13,13 @@ export const PRESET_CATEGORY_COLORS: Record<string, { bg: string; text: string; 
   life: { bg: 'bg-life-100', text: 'text-life-700', border: 'border-life-400', hex: '#6ab880' },
   other: { bg: 'bg-other-100', text: 'text-other-700', border: 'border-other-400', hex: '#a895c5' },
 }
+
+/** 分类切换选项 — 仅 AppMode 三种（学习/工作/其他） */
+export const CATEGORY_SWITCH_OPTIONS: { key: PresetCategory; label: string; emoji: string }[] = [
+  { key: 'study', label: '学习', emoji: '📚' },
+  { key: 'work', label: '工作', emoji: '💼' },
+  { key: 'other', label: '其他', emoji: '📌' },
+]
 
 /**
  * Get the display label for a category (preset or custom).

@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { Todo, Priority } from '../../types'
-import { getCategoryLabel, getCategoryColors, PRIORITY_LABELS, PRIORITY_CONFIG, QUADRANT_PRIORITY_MAP } from '../../constants'
+import type { Todo, Priority, PresetCategory, AppMode } from '../../types'
+import { getCategoryLabel, getCategoryColors, PRIORITY_LABELS, PRIORITY_CONFIG, QUADRANT_PRIORITY_MAP, CATEGORY_SWITCH_OPTIONS, PRESET_CATEGORY_COLORS } from '../../constants'
 import { useSettingsStore } from '../../store/settingsStore'
 import { useTodoStore } from '../../store/todoStore'
 import { getRelativeDateDescription, isOverdue, getDaysUntil, formatDate } from '../../utils/date'
@@ -26,6 +26,14 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
   const [showSubTasks, setShowSubTasks] = useState(false)
   const [showPriorityMenu, setShowPriorityMenu] = useState(false)
   const priorityMenuRef = useRef<HTMLDivElement>(null)
+  const [showCategoryMenu, setShowCategoryMenu] = useState(false)
+  const categoryMenuRef = useRef<HTMLDivElement>(null)
+  const [animPriority, setAnimPriority] = useState(false)
+  // Two-phase category switch animation: exit → change data → enter
+  const [categoryPhase, setCategoryPhase] = useState<'idle' | 'exit' | 'enter'>('idle')
+  const pendingCategoryRef = useRef<PresetCategory | null>(null)
+  const exitTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const enterTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
   const customCategories = useSettingsStore(s => s.settings.customCategories)
   const allTodos = useTodoStore(s => s.todos)
   const colors = getCategoryColors(todo.category, customCategories)
@@ -80,24 +88,66 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
       onEdit(todo.id, { title: editTitle.trim() })
     }
     setEditing(false)
+    setShowCategoryMenu(false)
   }
 
-  // Click-outside handler for priority popover
+  // Cleanup timers on unmount
   useEffect(() => {
-    if (!showPriorityMenu) return
+    return () => {
+      if (exitTimerRef.current) clearTimeout(exitTimerRef.current)
+      if (enterTimerRef.current) clearTimeout(enterTimerRef.current)
+    }
+  }, [])
+
+  // Click-outside handler for priority + category popovers
+  useEffect(() => {
+    if (!showPriorityMenu && !showCategoryMenu) return
     const handler = (e: MouseEvent) => {
       if (priorityMenuRef.current && !priorityMenuRef.current.contains(e.target as Node)) {
         setShowPriorityMenu(false)
       }
+      if (categoryMenuRef.current && !categoryMenuRef.current.contains(e.target as Node)) {
+        setShowCategoryMenu(false)
+      }
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
-  }, [showPriorityMenu])
+  }, [showPriorityMenu, showCategoryMenu])
 
   // Inline priority change — syncs both priority and quadrant
   const handlePriorityChange = (newPriority: Priority) => {
+    if (newPriority === todo.priority) { setShowPriorityMenu(false); return }
     onEdit(todo.id, { priority: newPriority, quadrant: QUADRANT_PRIORITY_MAP[newPriority] })
     setShowPriorityMenu(false)
+    setAnimPriority(true)
+    setTimeout(() => setAnimPriority(false), 250)
+  }
+
+  // Inline category change — two-phase animation: exit old → apply change → enter new
+  const handleCategoryChange = (newCategory: PresetCategory) => {
+    if (newCategory === todo.category) { setShowCategoryMenu(false); return }
+    setShowCategoryMenu(false)
+    pendingCategoryRef.current = newCategory
+
+    // Clear any stale timers
+    if (exitTimerRef.current) clearTimeout(exitTimerRef.current)
+    if (enterTimerRef.current) clearTimeout(enterTimerRef.current)
+
+    // Phase 1: shrink + fade out (still showing old category)
+    setCategoryPhase('exit')
+    exitTimerRef.current = setTimeout(() => {
+      // Midpoint: apply the actual category change
+      const cat = pendingCategoryRef.current
+      if (cat) {
+        onEdit(todo.id, { category: cat, mode: cat as AppMode })
+        pendingCategoryRef.current = null
+      }
+      // Phase 2: pop back in (now showing new category)
+      setCategoryPhase('enter')
+      enterTimerRef.current = setTimeout(() => {
+        setCategoryPhase('idle')
+      }, 300)
+    }, 230)
   }
 
   // Priority-aware urgency display — lower priority tones down due-date urgency
@@ -203,7 +253,7 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
             onBlur={handleEditSubmit}
             onKeyDown={e => {
               if (e.key === 'Enter') handleEditSubmit()
-              if (e.key === 'Escape') setEditing(false)
+              if (e.key === 'Escape') { setEditing(false); setShowCategoryMenu(false) }
             }}
             className="w-full px-2 py-1 border-2 border-warm-300 rounded-lg focus:outline-none focus:border-warm-400 text-sm bg-white animate-scale-in"
             autoFocus
@@ -239,19 +289,48 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
 
         {/* Meta row */}
         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-          {/* Category badge */}
-          {colors.bg ? (
-            <span className={`text-xs px-1.5 py-0.5 rounded-md font-medium ${colors.bg} ${colors.text}`}>
-              {getCategoryLabel(todo.category, customCategories)}
-            </span>
-          ) : (
-            <span
-              className="text-xs px-1.5 py-0.5 rounded-md font-medium border"
-              style={{ backgroundColor: colors.hex + '20', color: colors.hex, borderColor: colors.hex + '40' }}
+          {/* Category badge — clickable for inline editing */}
+          <div className="relative" ref={categoryMenuRef}>
+            <button
+              onClick={() => !isCompleted && setShowCategoryMenu(!showCategoryMenu)}
+              disabled={isCompleted}
+              className={`text-xs px-1.5 py-0.5 rounded-md font-medium transition-all ${
+                categoryPhase === 'exit' ? 'animate-category-out' :
+                categoryPhase === 'enter' ? 'animate-category-in' : ''
+              } ${
+                isCompleted ? 'cursor-default' : 'cursor-pointer hover:ring-1 hover:ring-warm-300/60 hover:shadow-sm'
+              } ${colors.bg || ''}`}
+              style={!colors.bg ? { backgroundColor: colors.hex + '20', color: colors.hex, borderColor: colors.hex + '40' } : undefined}
+              title={isCompleted ? '' : '点击切换分类'}
             >
               {getCategoryLabel(todo.category, customCategories)}
-            </span>
-          )}
+            </button>
+
+            {/* Category popover dropdown */}
+            {showCategoryMenu && !isCompleted && (
+              <div className="absolute bottom-full left-0 mb-1 z-50 bg-white dark:bg-warm-800 rounded-xl shadow-xl border border-warm-200/60 dark:border-warm-700/60 p-1.5 min-w-[120px] animate-scale-in">
+                {CATEGORY_SWITCH_OPTIONS.map(({ key, emoji }) => {
+                  const isSelected = todo.category === key
+                  const optColors = PRESET_CATEGORY_COLORS[key]
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => handleCategoryChange(key)}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                        isSelected
+                          ? 'bg-warm-200/60 dark:bg-warm-700/60'
+                          : 'hover:bg-warm-100 dark:hover:bg-warm-700/40'
+                      } ${optColors.text}`}
+                    >
+                      <span className="text-sm">{emoji}</span>
+                      <span>{getCategoryLabel(key, customCategories)}</span>
+                      {isSelected && <span className="ml-auto text-xs">✓</span>}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+          </div>
 
           {/* Priority — clickable for inline editing */}
           <div className="relative" ref={priorityMenuRef}>
@@ -265,7 +344,7 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
                 todo.priority === 'P2' ? 'text-study-600 bg-study-50/60 dark:bg-study-900/20' :
                 todo.priority === 'P3' ? 'text-amber-600 bg-amber-50/60 dark:bg-amber-900/20' :
                 'text-warm-500 bg-warm-100/60 dark:bg-warm-800/40'
-              }`}
+              } ${animPriority ? 'animate-pop' : ''}`}
               title={isCompleted ? '' : '点击修改优先级'}
             >
               {PRIORITY_LABELS[todo.priority]}
