@@ -34,7 +34,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
           <p className="text-warm-600 mb-4">应用遇到了一个意外错误，刷新页面试试吧。</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-warm-500 text-white rounded-lg hover:bg-warm-600 transition-colors"
+            className="px-6 py-2 bg-study-600 text-white rounded-lg hover:bg-study-700 transition-colors"
           >
             刷新页面
           </button>

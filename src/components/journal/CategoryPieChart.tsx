@@ -9,10 +9,10 @@ interface Props {
 }
 
 const PRESET_PIE_COLORS: Record<string, string> = {
-  '学习': '#5a9ec9',
-  '工作': '#d97c63',
-  '生活': '#6ab880',
-  '其他': '#a895c5',
+  '学习': '#4285f4',
+  '工作': '#ea4335',
+  '生活': '#34a853',
+  '其他': '#a142f4',
 }
 
 export function CategoryPieChart({ todos }: Props) {
@@ -46,10 +46,10 @@ export function CategoryPieChart({ todos }: Props) {
       colorMap[cat.name] = cat.color
     }
     // Also add preset category colors keyed by label
-    colorMap['学习'] = '#5a9ec9'
-    colorMap['工作'] = '#d97c63'
-    colorMap['生活'] = '#6ab880'
-    colorMap['其他'] = '#a895c5'
+    colorMap['学习'] = '#4285f4'
+    colorMap['工作'] = '#ea4335'
+    colorMap['生活'] = '#34a853'
+    colorMap['其他'] = '#a142f4'
 
     return { data, colorMap }
   }, [todos, customCategories])
@@ -79,7 +79,7 @@ export function CategoryPieChart({ todos }: Props) {
           {data.map(entry => (
             <Cell
               key={entry.name}
-              fill={colorMap[entry.name] || colorMap[entry.rawCategory] || '#c49a5c'}
+              fill={colorMap[entry.name] || colorMap[entry.rawCategory] || '#4285f4'}
               stroke="none"
             />
           ))}
@@ -87,7 +87,7 @@ export function CategoryPieChart({ todos }: Props) {
         <Tooltip
           contentStyle={{
             background: 'rgba(255,255,255,0.95)',
-            border: '1px solid rgba(196,154,92,0.2)',
+            border: '1px solid rgba(66,133,244,0.2)',
             borderRadius: '12px',
             fontSize: '12px',
             boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
@@ -100,7 +100,7 @@ export function CategoryPieChart({ todos }: Props) {
           iconType="circle"
           iconSize={8}
           formatter={(value: string) => (
-            <span style={{ color: '#8f6332', fontSize: '12px' }}>{value}</span>
+            <span style={{ color: '#5f6368', fontSize: '12px' }}>{value}</span>
           )}
         />
       </PieChart>

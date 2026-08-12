@@ -1,7 +1,9 @@
 import { Outlet, NavLink } from 'react-router-dom'
 import { TopBar } from './TopBar'
 import { Toast } from '../common/Toast'
+import { DailySummaryModal } from '../dashboard/DailySummaryModal'
 import { useAutoSave } from '../../hooks/useAutoSave'
+import { useDailySummary } from '../../hooks/useDailySummary'
 import { useTodoStore } from '../../store/todoStore'
 import { useSettingsStore } from '../../store/settingsStore'
 import { useUIStore } from '../../store/uiStore'
@@ -17,6 +19,10 @@ export function AppLayout() {
   const storageMode = useUIStore(s => s.storageMode)
   const dismissWarning = useUIStore(s => s.dismissStorageWarning)
   const warningDismissed = useUIStore(s => s.storageWarningDismissed)
+
+  // Daily summary modal (timed trigger) — lives here now that the app uses a
+  // data router, so it stays inside the router context like the rest of the UI.
+  const { showModal, dismiss, saveSummary, todos } = useDailySummary()
 
   useEffect(() => {
     initStorage().then(() => {
@@ -60,23 +66,23 @@ export function AppLayout() {
       <div className="flex">
         {/* Side Nav */}
         <nav className="sticky top-[92px] h-[calc(100vh-92px)] w-48 flex-shrink-0 border-r border-warm-200 dark:border-warm-700/60 p-3 space-y-1 overflow-y-auto hidden md:block">
-          <NavLink to="/" end className={navLinkClass}>
+          <NavLink to="/" end viewTransition className={navLinkClass}>
             🏠 首页
           </NavLink>
-          <NavLink to="/quadrant" className={navLinkClass}>
+          <NavLink to="/quadrant" viewTransition className={navLinkClass}>
             📐 四象限
           </NavLink>
-          <NavLink to="/journal" className={navLinkClass}>
+          <NavLink to="/journal" viewTransition className={navLinkClass}>
             📓 月志
           </NavLink>
-          <NavLink to="/overview" className={navLinkClass}>
+          <NavLink to="/overview" viewTransition className={navLinkClass}>
             📊 概况
           </NavLink>
-          <NavLink to="/trash" className={navLinkClass}>
+          <NavLink to="/trash" viewTransition className={navLinkClass}>
             🗑️ 回收站
           </NavLink>
           <div className="pt-3 mt-3 border-t border-warm-200 dark:border-warm-700/60">
-            <NavLink to="/settings" className={navLinkClass}>
+            <NavLink to="/settings" viewTransition className={navLinkClass}>
               ⚙️ 设置
             </NavLink>
           </div>
@@ -91,13 +97,21 @@ export function AppLayout() {
       </div>
 
       {/* Mobile Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 bg-warm-50/90 dark:bg-warm-900/90 backdrop-blur-md border-t border-warm-200 dark:border-warm-700/60 md:hidden flex justify-around py-2">
-        <NavLink to="/" end className={navLinkClass}>🏠</NavLink>
-        <NavLink to="/quadrant" className={navLinkClass}>📐</NavLink>
-        <NavLink to="/journal" className={navLinkClass}>📓</NavLink>
-        <NavLink to="/overview" className={navLinkClass}>📊</NavLink>
-        <NavLink to="/settings" className={navLinkClass}>⚙️</NavLink>
+      <nav className="fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-warm-900 border-t border-warm-200 dark:border-warm-700/60 md:hidden flex justify-around py-2">
+        <NavLink to="/" end viewTransition className={navLinkClass}>🏠</NavLink>
+        <NavLink to="/quadrant" viewTransition className={navLinkClass}>📐</NavLink>
+        <NavLink to="/journal" viewTransition className={navLinkClass}>📓</NavLink>
+        <NavLink to="/overview" viewTransition className={navLinkClass}>📊</NavLink>
+        <NavLink to="/settings" viewTransition className={navLinkClass}>⚙️</NavLink>
       </nav>
+
+      {showModal && (
+        <DailySummaryModal
+          todos={todos}
+          onSave={saveSummary}
+          onDismiss={dismiss}
+        />
+      )}
 
       <Toast />
     </div>

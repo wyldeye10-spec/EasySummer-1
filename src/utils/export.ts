@@ -1,4 +1,4 @@
-import type { Todo, DailySummary } from '../types'
+import type { Todo, MonthlyHighlight, MonthlyGoal } from '../types'
 import { CATEGORY_LABELS, PRIORITY_LABELS } from '../constants'
 import { formatDate } from './date'
 
@@ -31,8 +31,8 @@ export function exportMonthlyJournalMarkdown(
   year: number,
   month: number,
   todos: Todo[],
-  highlights: string,
-  nextGoals: string
+  highlights: MonthlyHighlight[],
+  nextGoals: MonthlyGoal[]
 ): string {
   const lines: string[] = [
     `# 📓 ${year}年${month}月 月度总结`,
@@ -57,8 +57,22 @@ export function exportMonthlyJournalMarkdown(
   }
   lines.push('')
 
-  lines.push('## ✨ 本月高光时刻', '', highlights || '_暂无_', '')
-  lines.push('## 🎯 下月目标', '', nextGoals || '_暂无_', '')
+  lines.push('## ✨ 本月高光时刻', '')
+  if (highlights.length === 0) {
+    lines.push('_暂无_')
+  } else {
+    for (const h of highlights) lines.push(`- ${h.emoji} ${h.text}`)
+  }
+  lines.push('')
+
+  lines.push('## 🎯 下月目标', '')
+  if (nextGoals.length === 0) {
+    lines.push('_暂无_')
+  } else {
+    for (const g of nextGoals) lines.push(`- [${g.done ? 'x' : ' '}] ${g.text}`)
+  }
+  lines.push('')
+
   lines.push('---', '', '> 由 Summer Planner 生成')
 
   return lines.join('\n')

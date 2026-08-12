@@ -74,8 +74,8 @@ export function StatsCard() {
               <div
                 className={`w-full rounded-t-md transition-all duration-500 ${
                   d.count > 0
-                    ? 'bg-gradient-to-t from-warm-400 dark:from-warm-500 to-warm-300 dark:to-warm-400'
-                    : 'bg-warm-150 dark:bg-warm-800/40'
+                    ? 'bg-gradient-to-t from-study-400 dark:from-study-500 to-study-300 dark:to-study-400'
+                    : 'bg-warm-200/60 dark:bg-warm-800/40'
                 }`}
                 style={{
                   height: `${Math.max((d.count / stats.maxWeek) * 100, d.count > 0 ? 8 : 3)}%`,

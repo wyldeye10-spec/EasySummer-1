@@ -3,7 +3,8 @@ import { useSettingsStore } from '../../store/settingsStore'
 import { useTodoStore } from '../../store/todoStore'
 import { CATEGORY_LABELS, CATEGORY_COLORS } from '../../constants'
 import { exportAsJSON, downloadFile } from '../../utils/export'
-import type { Category, Todo, UserSettings } from '../../types'
+import { getAllMonthlyJournals, saveMonthlyJournal } from '../../db/storage'
+import type { Category, Todo, UserSettings, MonthlyJournal } from '../../types'
 
 export function Settings() {
   const { settings, update, reset } = useSettingsStore()
@@ -27,8 +28,9 @@ export function Settings() {
     })
   }
 
-  const handleExportData = () => {
-    const data = exportAsJSON({ todos, settings })
+  const handleExportData = async () => {
+    const monthlyJournals = await getAllMonthlyJournals()
+    const data = exportAsJSON({ todos, settings, monthlyJournals })
     downloadFile(data, 'summer-planner-backup.json', 'application/json')
     setSaveLabel('已导出 ✓')
     setTimeout(() => setSaveLabel(''), 2000)
@@ -51,7 +53,8 @@ export function Settings() {
           return
         }
 
-        let importedCount = 0
+        let importedTodos = 0
+        let importedJournals = 0
 
         // Import settings
         if (data.settings && typeof data.settings === 'object') {
@@ -61,14 +64,28 @@ export function Settings() {
         // Import todos
         if (Array.isArray(data.todos) && data.todos.length > 0) {
           await importTodos(data.todos as Todo[])
-          importedCount = data.todos.length
+          importedTodos = data.todos.length
         }
 
-        if (importedCount > 0 || data.settings) {
-          setSaveLabel(`已导入 ${importedCount > 0 ? `${importedCount} 条事项` : ''}${importedCount > 0 && data.settings ? ' + ' : ''}${data.settings ? '设置' : ''} ✓`)
-        } else {
-          setSaveLabel('未找到可导入的数据')
+        // Import monthly journals (highlights + next goals)
+        if (Array.isArray(data.monthlyJournals)) {
+          for (const j of data.monthlyJournals as MonthlyJournal[]) {
+            if (
+              j && typeof j.id === 'string' &&
+              Array.isArray(j.highlights) && Array.isArray(j.nextGoals)
+            ) {
+              await saveMonthlyJournal(j)
+              importedJournals++
+            }
+          }
         }
+
+        const parts: string[] = []
+        if (importedTodos > 0) parts.push(`${importedTodos} 条事项`)
+        if (importedJournals > 0) parts.push(`${importedJournals} 份月志`)
+        if (data.settings && typeof data.settings === 'object') parts.push('设置')
+
+        setSaveLabel(parts.length > 0 ? `已导入 ${parts.join(' + ')} ✓` : '未找到可导入的数据')
         setTimeout(() => setSaveLabel(''), 3000)
       } catch {
         alert('导入失败：文件格式不正确')
@@ -100,7 +117,7 @@ export function Settings() {
             step={5}
             value={settings.pomodoroMinutes}
             onChange={e => handlePomodoroChange(parseInt(e.target.value))}
-            className="flex-1 accent-warm-500 h-2 rounded-full"
+            className="flex-1 accent-study-600 h-2 rounded-full"
           />
           <span className="text-sm font-mono font-bold text-warm-700 bg-warm-100 px-3 py-1.5 rounded-xl min-w-[4rem] text-center">
             {settings.pomodoroMinutes} 分钟
@@ -120,7 +137,7 @@ export function Settings() {
           type="time"
           value={settings.dailySummaryTime}
           onChange={e => update({ dailySummaryTime: e.target.value })}
-          className="px-4 py-2 glass border border-warm-200/60 rounded-xl text-sm text-warm-700 focus:outline-none focus:ring-2 focus:ring-warm-300/30"
+          className="px-4 py-2 glass border border-warm-200/60 rounded-xl text-sm text-warm-700 focus:outline-none focus:ring-2 focus:ring-study-500/30"
         />
       </div>
 
@@ -144,7 +161,7 @@ export function Settings() {
             aria-checked={settings.autoDarkMode}
             className={`relative w-11 h-6 rounded-full transition-colors duration-200 flex-shrink-0 ${
               settings.autoDarkMode
-                ? 'bg-warm-500'
+                ? 'bg-study-600'
                 : 'bg-warm-200 dark:bg-warm-700'
             }`}
           >
@@ -183,7 +200,7 @@ export function Settings() {
             id="new-quote"
             type="text"
             placeholder="添加一句励志短句..."
-            className="flex-1 px-4 py-2 bg-warm-50/50 border border-warm-200/60 rounded-xl text-sm text-warm-700 placeholder-warm-400 focus:outline-none focus:ring-2 focus:ring-warm-300/30"
+            className="flex-1 px-4 py-2 bg-warm-50/50 border border-warm-200/60 rounded-xl text-sm text-warm-700 placeholder-warm-400 focus:outline-none focus:ring-2 focus:ring-study-500/30"
             onKeyDown={e => {
               if (e.key === 'Enter') {
                 handleAddQuote((e.target as HTMLInputElement).value)
@@ -197,7 +214,7 @@ export function Settings() {
               handleAddQuote(el.value)
               el.value = ''
             }}
-            className="px-4 py-2 bg-gradient-to-br from-warm-400 to-warm-500 text-white rounded-xl text-sm font-medium hover:from-warm-500 hover:to-warm-600 transition-all shadow-md active:scale-95"
+            className="px-4 py-2 bg-study-600 text-white rounded-xl text-sm font-medium hover:bg-study-700 transition-all shadow-md active:scale-95"
           >
             添加
           </button>
@@ -254,12 +271,12 @@ export function Settings() {
             id="new-cat-name"
             type="text"
             placeholder="分类名称..."
-            className="flex-1 px-4 py-2 bg-warm-50/50 dark:bg-warm-800/50 border border-warm-200/60 dark:border-warm-700/40 rounded-xl text-sm text-warm-700 dark:text-warm-200 placeholder-warm-400 focus:outline-none focus:ring-2 focus:ring-warm-300/30"
+            className="flex-1 px-4 py-2 bg-warm-50/50 dark:bg-warm-800/50 border border-warm-200/60 dark:border-warm-700/40 rounded-xl text-sm text-warm-700 dark:text-warm-200 placeholder-warm-400 focus:outline-none focus:ring-2 focus:ring-study-500/30"
           />
           <input
             id="new-cat-color"
             type="color"
-            defaultValue="#c49a5c"
+            defaultValue="#4285f4"
             className="w-10 h-10 rounded-xl border border-warm-200/60 cursor-pointer"
           />
           <button
@@ -273,7 +290,7 @@ export function Settings() {
                 nameEl.value = ''
               }
             }}
-            className="px-4 py-2 bg-gradient-to-br from-warm-400 to-warm-500 text-white rounded-xl text-sm font-medium hover:from-warm-500 hover:to-warm-600 transition-all shadow-md active:scale-95"
+            className="px-4 py-2 bg-study-600 text-white rounded-xl text-sm font-medium hover:bg-study-700 transition-all shadow-md active:scale-95"
           >
             添加
           </button>
@@ -314,7 +331,7 @@ export function Settings() {
             id="new-tag"
             type="text"
             placeholder="例如：今天前、明晚前…"
-            className="flex-1 px-4 py-2 bg-warm-50/50 dark:bg-warm-800/50 border border-warm-200/60 dark:border-warm-700/40 rounded-xl text-sm text-warm-700 dark:text-warm-200 placeholder-warm-400 focus:outline-none focus:ring-2 focus:ring-warm-300/30"
+            className="flex-1 px-4 py-2 bg-warm-50/50 dark:bg-warm-800/50 border border-warm-200/60 dark:border-warm-700/40 rounded-xl text-sm text-warm-700 dark:text-warm-200 placeholder-warm-400 focus:outline-none focus:ring-2 focus:ring-study-500/30"
             onKeyDown={e => {
               if (e.key === 'Enter') {
                 const val = (e.target as HTMLInputElement).value.trim()
@@ -334,7 +351,7 @@ export function Settings() {
               }
               el.value = ''
             }}
-            className="px-4 py-2 bg-gradient-to-br from-study-400 to-study-500 text-white rounded-xl text-sm font-medium hover:from-study-500 hover:to-study-600 transition-all shadow-md active:scale-95"
+            className="px-4 py-2 bg-study-600 text-white rounded-xl text-sm font-medium hover:bg-study-700 transition-all shadow-md active:scale-95"
           >
             添加
           </button>
@@ -352,7 +369,7 @@ export function Settings() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={handleExportData}
-            className="px-4 py-2.5 bg-gradient-to-br from-warm-400 to-warm-500 text-white rounded-xl text-sm font-medium hover:from-warm-500 hover:to-warm-600 transition-all shadow-md active:scale-95"
+            className="px-4 py-2.5 bg-study-600 text-white rounded-xl text-sm font-medium hover:bg-study-700 transition-all shadow-md active:scale-95"
           >
             📥 导出数据 (JSON)
           </button>

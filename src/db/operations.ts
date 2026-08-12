@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 import { db } from './database'
-import type { Todo, DailySummary, UserSettings } from '../types'
+import type { Todo, DailySummary, UserSettings, MonthlyJournal } from '../types'
 
 // ============ Todo CRUD ============
 
@@ -136,6 +136,24 @@ export async function getAllDailySummaries(): Promise<DailySummary[]> {
 
 export async function saveDailySummary(summary: DailySummary): Promise<void> {
   await db.dailySummaries.put(summary)
+}
+
+// ============ MonthlyJournal CRUD ============
+
+function monthKey(year: number, month: number): string {
+  return `${year}-${String(month).padStart(2, '0')}`
+}
+
+export async function getMonthlyJournal(year: number, month: number): Promise<MonthlyJournal | undefined> {
+  return db.monthlyJournals.get(monthKey(year, month))
+}
+
+export async function getAllMonthlyJournals(): Promise<MonthlyJournal[]> {
+  return db.monthlyJournals.toArray()
+}
+
+export async function saveMonthlyJournal(journal: MonthlyJournal): Promise<void> {
+  await db.monthlyJournals.put(journal)
 }
 
 // ============ Settings ============

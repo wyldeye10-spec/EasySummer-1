@@ -235,7 +235,7 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
                 ? 'border-red-200 hover:border-red-300 hover:bg-red-50'
                 : effectiveUrgency === 'soon'
                   ? 'border-amber-300 hover:border-amber-400 hover:bg-amber-50'
-                  : 'border-warm-300 hover:border-warm-400 hover:bg-warm-50 hover:scale-110'
+                  : 'border-warm-300 hover:border-study-500 hover:bg-warm-50 hover:scale-110'
         }`}
       >
         {isCompleted && (
@@ -255,7 +255,7 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
               if (e.key === 'Enter') handleEditSubmit()
               if (e.key === 'Escape') { setEditing(false); setShowCategoryMenu(false) }
             }}
-            className="w-full px-2 py-1 border-2 border-warm-300 rounded-lg focus:outline-none focus:border-warm-400 text-sm bg-white animate-scale-in"
+            className="w-full px-2 py-1 border-2 border-warm-300 rounded-lg focus:outline-none focus:border-study-500 text-sm bg-white animate-scale-in"
             autoFocus
           />
         ) : (
@@ -299,7 +299,7 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
                 categoryPhase === 'enter' ? 'animate-category-in' : ''
               } ${
                 isCompleted ? 'cursor-default' : 'cursor-pointer hover:ring-1 hover:ring-warm-300/60 hover:shadow-sm'
-              } ${colors.bg || ''}`}
+              } ${colors.bg || ''} ${colors.text || ''}`}
               style={!colors.bg ? { backgroundColor: colors.hex + '20', color: colors.hex, borderColor: colors.hex + '40' } : undefined}
               title={isCompleted ? '' : '点击切换分类'}
             >
@@ -440,7 +440,7 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
             </button>
             <div className="flex-1 h-0.5 bg-warm-200 rounded-full overflow-hidden max-w-[120px]">
               <div
-                className="h-full bg-warm-400 rounded-full animate-[shrink_3s_linear]"
+                className="h-full bg-study-500 rounded-full animate-[shrink_3s_linear]"
                 style={{ width: '100%' }}
               />
             </div>

@@ -39,6 +39,28 @@ export interface DailySummary {
   createdAt: string
 }
 
+// ============ 月志 ============
+export interface MonthlyHighlight {
+  id: string
+  emoji: string
+  text: string
+}
+
+export interface MonthlyGoal {
+  id: string
+  text: string
+  done: boolean
+}
+
+export interface MonthlyJournal {
+  id: string            // `${year}-${MM}`，每月一条
+  year: number
+  month: number         // 1-12
+  highlights: MonthlyHighlight[]
+  nextGoals: MonthlyGoal[]
+  updatedAt: string
+}
+
 // ============ 用户设置 ============
 export interface UserSettings {
   id?: string               // Dexie primary key

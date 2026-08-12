@@ -97,7 +97,7 @@ export function TodoList() {
                   ? 'bg-gradient-to-r from-emerald-400 to-emerald-500'
                   : completionRate > 50
                     ? 'bg-gradient-to-r from-study-400 to-study-500'
-                    : 'bg-gradient-to-r from-warm-400 to-warm-500'
+                    : 'bg-gradient-to-r from-study-500 to-study-600'
               } ${completionRate > 0 && completionRate < 100 ? 'stripe-progress' : ''}`}
               style={{ width: `${completionRate}%` }}
             />

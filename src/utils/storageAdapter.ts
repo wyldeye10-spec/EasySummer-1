@@ -3,13 +3,14 @@
  * Mirrors the same interface as db/operations.ts for todos, dailySummaries, and settings.
  */
 import { nanoid } from 'nanoid'
-import type { Todo, DailySummary, UserSettings } from '../types'
+import type { Todo, DailySummary, UserSettings, MonthlyJournal } from '../types'
 import { DEFAULT_SETTINGS } from '../constants'
 
 const KEYS = {
   todos: 'planner_ls_todos',
   summaries: 'planner_ls_summaries',
   settings: 'planner_ls_settings',
+  monthlyJournals: 'planner_ls_monthlyJournals',
 }
 
 function read<T>(key: string, fallback: T): T {
@@ -146,6 +147,31 @@ export async function lsSaveDailySummary(summary: DailySummary): Promise<void> {
     summaries.push(summary)
   }
   write(KEYS.summaries, summaries)
+}
+
+// ============ MonthlyJournal CRUD ============
+
+function readMonthlyJournals(): MonthlyJournal[] {
+  return read<MonthlyJournal[]>(KEYS.monthlyJournals, [])
+}
+
+export async function lsGetMonthlyJournal(year: number, month: number): Promise<MonthlyJournal | undefined> {
+  return readMonthlyJournals().find(j => j.year === year && j.month === month)
+}
+
+export async function lsGetAllMonthlyJournals(): Promise<MonthlyJournal[]> {
+  return readMonthlyJournals()
+}
+
+export async function lsSaveMonthlyJournal(journal: MonthlyJournal): Promise<void> {
+  const journals = readMonthlyJournals()
+  const idx = journals.findIndex(j => j.id === journal.id)
+  if (idx !== -1) {
+    journals[idx] = journal
+  } else {
+    journals.push(journal)
+  }
+  write(KEYS.monthlyJournals, journals)
 }
 
 // ============ Settings ============

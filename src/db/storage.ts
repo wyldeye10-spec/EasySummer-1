@@ -2,7 +2,7 @@
  * Unified storage interface that auto-selects between IndexedDB (Dexie) and localStorage fallback.
  * All stores should use this module instead of directly importing from db/operations.ts.
  */
-import type { Todo, DailySummary, UserSettings } from '../types'
+import type { Todo, DailySummary, UserSettings, MonthlyJournal } from '../types'
 import * as idb from './operations'
 import * as ls from '../utils/storageAdapter'
 import { useUIStore, type StorageMode } from '../store/uiStore'
@@ -120,6 +120,23 @@ export async function getAllDailySummaries(): Promise<DailySummary[]> {
 export async function saveDailySummary(summary: DailySummary): Promise<void> {
   if (storageMode() === 'localstorage') { await ls.lsSaveDailySummary(summary); return }
   try { await idb.saveDailySummary(summary) } catch { await ls.lsSaveDailySummary(summary) }
+}
+
+// ============ MonthlyJournal CRUD ============
+
+export async function getMonthlyJournal(year: number, month: number): Promise<MonthlyJournal | undefined> {
+  if (storageMode() === 'localstorage') return ls.lsGetMonthlyJournal(year, month)
+  try { return await idb.getMonthlyJournal(year, month) } catch { return ls.lsGetMonthlyJournal(year, month) }
+}
+
+export async function getAllMonthlyJournals(): Promise<MonthlyJournal[]> {
+  if (storageMode() === 'localstorage') return ls.lsGetAllMonthlyJournals()
+  try { return await idb.getAllMonthlyJournals() } catch { return ls.lsGetAllMonthlyJournals() }
+}
+
+export async function saveMonthlyJournal(journal: MonthlyJournal): Promise<void> {
+  if (storageMode() === 'localstorage') { await ls.lsSaveMonthlyJournal(journal); return }
+  try { await idb.saveMonthlyJournal(journal) } catch { await ls.lsSaveMonthlyJournal(journal) }
 }
 
 // ============ Settings ============

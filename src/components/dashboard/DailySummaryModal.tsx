@@ -114,7 +114,7 @@ export function DailySummaryModal({ todos, onSave, onDismiss }: Props) {
             value={suggestion}
             onChange={e => setSuggestion(e.target.value)}
             placeholder={autoSuggestion}
-            className="w-full h-20 px-3 py-2 bg-warm-50/50 dark:bg-warm-800/50 border border-warm-200/60 dark:border-warm-700/40 rounded-xl text-sm text-warm-700 dark:text-warm-200 placeholder-warm-400 resize-none focus:outline-none focus:ring-2 focus:ring-warm-300/30"
+            className="w-full h-20 px-3 py-2 bg-warm-50/50 dark:bg-warm-800/50 border border-warm-200/60 dark:border-warm-700/40 rounded-xl text-sm text-warm-700 dark:text-warm-200 placeholder-warm-400 resize-none focus:outline-none focus:ring-2 focus:ring-study-500/30"
           />
         </div>
 
@@ -123,7 +123,7 @@ export function DailySummaryModal({ todos, onSave, onDismiss }: Props) {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex-1 px-4 py-2.5 bg-gradient-to-br from-warm-400 to-warm-500 text-white rounded-xl text-sm font-medium hover:from-warm-500 hover:to-warm-600 transition-all shadow-md active:scale-95"
+            className="flex-1 px-4 py-2.5 bg-study-600 text-white rounded-xl text-sm font-medium hover:bg-study-700 transition-all shadow-md active:scale-95"
           >
             {saving ? '保存中...' : '💾 保存'}
           </button>

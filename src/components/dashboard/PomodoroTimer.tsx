@@ -62,8 +62,8 @@ export function PomodoroTimer() {
 
       // Generate confetti particles
       const colors = darkMode
-        ? ['#7eb8da', '#50b880', '#d9c4a0', '#e8d5b7', '#a3d0ea', '#90d8b0']
-        : ['#5a9ec9', '#4ade80', '#c49a5c', '#f59e0b', '#7eb8da', '#86efac']
+        ? ['#8ab4f8', '#81c995', '#c58af9', '#f28b82', '#fbbc04', '#669df6']
+        : ['#4285f4', '#34a853', '#a142f4', '#ea4335', '#fbbc04', '#8ab4f8']
       confettiPieces.current = Array.from({ length: 16 }, (_, i) => ({
         angle: (i / 16) * Math.PI * 2 + (Math.random() - 0.5) * 0.3,
         dist: 40 + Math.random() * 50,
@@ -211,12 +211,12 @@ export function PomodoroTimer() {
           <svg className="w-full h-full -rotate-90 relative z-10" viewBox="0 0 100 100">
             <defs>
               <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor={darkMode ? '#6ea8ca' : '#5a9ec9'} />
-                <stop offset="100%" stopColor={darkMode ? '#a3d0ea' : '#7eb8da'} />
+                <stop offset="0%" stopColor={darkMode ? '#669df6' : '#4285f4'} />
+                <stop offset="100%" stopColor={darkMode ? '#8ab4f8' : '#669df6'} />
               </linearGradient>
               <linearGradient id="emeraldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor={darkMode ? '#50b880' : '#4ade80'} />
-                <stop offset="100%" stopColor={darkMode ? '#90d8b0' : '#86efac'} />
+                <stop offset="0%" stopColor={darkMode ? '#4fb56a' : '#34a853'} />
+                <stop offset="100%" stopColor={darkMode ? '#7bc58e' : '#4fb56a'} />
               </linearGradient>
             </defs>
             {/* Background ring */}
@@ -264,7 +264,7 @@ export function PomodoroTimer() {
           {state === 'idle' && (
             <button
               onClick={start}
-              className="ripple-container relative px-5 py-2 bg-gradient-to-br from-study-400 to-study-500 text-white rounded-xl text-sm font-medium hover:from-study-500 hover:to-study-600 transition-all shadow-md hover:shadow-lg active:scale-95"
+              className="ripple-container relative px-5 py-2 bg-study-600 text-white rounded-xl text-sm font-medium hover:bg-study-700 transition-all shadow-md hover:shadow-lg active:scale-95"
             >
               开始 {minutes} 分钟
             </button>
@@ -281,7 +281,7 @@ export function PomodoroTimer() {
             <>
               <button
                 onClick={resume}
-                className="px-4 py-2 bg-gradient-to-br from-study-400 to-study-500 text-white rounded-xl text-sm font-medium hover:from-study-500 hover:to-study-600 transition-all shadow-md active:scale-95"
+                className="px-4 py-2 bg-study-600 text-white rounded-xl text-sm font-medium hover:bg-study-700 transition-all shadow-md active:scale-95"
               >
                 继续
               </button>
@@ -303,7 +303,7 @@ export function PomodoroTimer() {
           {state === 'finished' && (
             <button
               onClick={handleReset}
-              className="px-5 py-2 bg-gradient-to-br from-emerald-400 to-emerald-500 text-white rounded-xl text-sm font-medium hover:from-emerald-500 hover:to-emerald-600 transition-all shadow-md hover:shadow-lg active:scale-95 animate-bounce-gentle"
+              className="px-5 py-2 bg-emerald-500 text-white rounded-xl text-sm font-medium hover:bg-emerald-600 transition-all shadow-md hover:shadow-lg active:scale-95 animate-bounce-gentle"
             >
               再来一个 🎉
             </button>
@@ -334,7 +334,7 @@ export function PomodoroTimer() {
             <select
               value={selectedTodoId}
               onChange={e => setSelectedTodoId(e.target.value)}
-              className="w-full px-3 py-2 mb-4 bg-warm-50/50 dark:bg-warm-800/50 border border-warm-200/60 dark:border-warm-700/40 rounded-xl text-sm text-warm-700 dark:text-warm-200 focus:outline-none focus:ring-2 focus:ring-warm-300/30"
+              className="w-full px-3 py-2 mb-4 bg-warm-50/50 dark:bg-warm-800/50 border border-warm-200/60 dark:border-warm-700/40 rounded-xl text-sm text-warm-700 dark:text-warm-200 focus:outline-none focus:ring-2 focus:ring-study-500/30"
             >
               <option value="">不关联</option>
               {pendingTodos.map(t => (
@@ -347,7 +347,7 @@ export function PomodoroTimer() {
             <div className="flex gap-2">
               <button
                 onClick={handleLogTime}
-                className="flex-1 px-4 py-2 bg-gradient-to-br from-emerald-400 to-emerald-500 text-white rounded-xl text-sm font-medium hover:from-emerald-500 hover:to-emerald-600 transition-all shadow-md active:scale-95"
+                className="flex-1 px-4 py-2 bg-emerald-500 text-white rounded-xl text-sm font-medium hover:bg-emerald-600 transition-all shadow-md active:scale-95"
               >
                 记录
               </button>

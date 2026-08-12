@@ -96,12 +96,12 @@ export function SubTaskList({ parentTodo }: Props) {
               if (e.key === 'Escape') setAdding(false)
             }}
             placeholder="子任务标题..."
-            className="flex-1 px-2 py-1 text-sm bg-warm-50/50 dark:bg-warm-800/50 border border-warm-200/60 dark:border-warm-700/40 rounded-lg focus:outline-none focus:border-warm-400 dark:text-warm-200 placeholder-warm-400"
+            className="flex-1 px-2 py-1 text-sm bg-warm-50/50 dark:bg-warm-800/50 border border-warm-200/60 dark:border-warm-700/40 rounded-lg focus:outline-none focus:border-study-500 dark:text-warm-200 placeholder-warm-400"
             autoFocus
           />
           <button
             onClick={handleAdd}
-            className="text-xs px-2 py-1 bg-warm-400 text-white rounded-lg hover:bg-warm-500"
+            className="text-xs px-2 py-1 bg-study-500 text-white rounded-lg hover:bg-study-600"
           >
             添加
           </button>

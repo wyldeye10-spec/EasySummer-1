@@ -155,12 +155,12 @@ export function QuickInput() {
       </div>
 
       {/* Main input card */}
-      <div className={`relative rounded-2xl transition-all duration-300 ${
+      <div className={`relative rounded-full transition-all duration-300 ${
         focused
-          ? 'ring-2 ring-warm-400/50 shadow-lg shadow-warm-300/20'
+          ? 'ring-2 ring-study-500/50 shadow-lg shadow-study-300/20'
           : 'ring-1 ring-warm-200/60 shadow-md hover:shadow-lg hover:ring-warm-300/50'
       } ${successBurst ? 'animate-bounce-gentle' : ''}`}>
-        <div className={`absolute inset-0 rounded-2xl transition-opacity duration-500 pointer-events-none ${
+        <div className={`absolute inset-0 rounded-full transition-opacity duration-500 pointer-events-none ${
           focused ? 'opacity-100' : 'opacity-0'
         } bg-gradient-to-r from-warm-100/50 via-transparent to-warm-100/50`} />
 
@@ -198,7 +198,7 @@ export function QuickInput() {
             onBlur={handleBlur}
             placeholder={storageDisabled ? '无法存储数据，请检查浏览器设置' : '输入新事项，Enter 保存…  (支持日期短语、预计时间)'}
             disabled={storageDisabled}
-            className={`flex-1 py-2 glass rounded-xl text-warm-800 dark:text-warm-200 placeholder-warm-400/60 dark:placeholder-warm-500/50 focus:outline-none transition-all text-sm bg-transparent ${
+            className={`flex-1 py-2 glass rounded-full text-warm-800 dark:text-warm-200 placeholder-warm-400/60 dark:placeholder-warm-500/50 focus:outline-none transition-all text-sm bg-transparent ${
               storageDisabled ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             maxLength={200}
@@ -209,9 +209,9 @@ export function QuickInput() {
           <button
             onClick={handleSubmit}
             disabled={!value.trim()}
-            className={`flex-shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-xl text-sm transition-all duration-300 ${
+            className={`flex-shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-full text-sm transition-all duration-300 ${
               value.trim()
-                ? 'bg-warm-500 dark:bg-warm-400 text-white dark:text-warm-900 shadow-sm hover:bg-warm-600 dark:hover:bg-warm-300 active:scale-95 cursor-pointer'
+                ? 'bg-study-600 dark:bg-study-500 text-white shadow-sm hover:bg-study-700 dark:hover:bg-study-400 active:scale-95 cursor-pointer'
                 : 'bg-warm-200/80 dark:bg-warm-700/60 text-warm-400 dark:text-warm-500 cursor-default'
             }`}
             title="提交 (Enter)"

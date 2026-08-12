@@ -43,7 +43,7 @@ function QuadrantDropZone({ quadrant, children }: { quadrant: Quadrant; children
     <div
       ref={setNodeRef}
       className={`transition-all duration-200 rounded-2xl ${
-        isOver ? 'ring-2 ring-warm-400/60 scale-[1.02] shadow-lg' : ''
+        isOver ? 'ring-2 ring-study-500/60 scale-[1.02] shadow-lg' : ''
       }`}
     >
       {children}

@@ -1,10 +1,11 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { Todo, DailySummary, UserSettings } from '../types'
+import type { Todo, DailySummary, UserSettings, MonthlyJournal } from '../types'
 
 export class PlannerDB extends Dexie {
   todos!: EntityTable<Todo, 'id'>
   dailySummaries!: EntityTable<DailySummary, 'id'>
   settings!: EntityTable<UserSettings>
+  monthlyJournals!: EntityTable<MonthlyJournal, 'id'>
 
   constructor() {
     super('SummerPlannerDB')
@@ -41,6 +42,14 @@ export class PlannerDB extends Dexie {
           await tx.table('todos').update(todo.id, { pomodoroCount: 0 })
         }
       }
+    })
+
+    // v4: add monthlyJournals table (per-month highlights + next goals)
+    this.version(4).stores({
+      todos: 'id, status, category, priority, quadrant, mode, dueDate, createdAt, sortOrder',
+      dailySummaries: 'id, date',
+      settings: 'id',
+      monthlyJournals: 'id',
     })
   }
 }

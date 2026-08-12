@@ -19,7 +19,7 @@ export function EmptyState({ icon = '🎯', title, description, action }: Props)
       {action && (
         <button
           onClick={action.onClick}
-          className="px-4 py-2 bg-gradient-to-br from-warm-400 to-warm-500 text-white rounded-xl hover:from-warm-500 hover:to-warm-600 transition-all shadow-md hover:shadow-lg active:scale-95 text-sm font-medium"
+          className="px-4 py-2 bg-study-600 text-white rounded-xl hover:bg-study-700 transition-all shadow-md hover:shadow-lg active:scale-95 text-sm font-medium"
         >
           {action.label}
         </button>

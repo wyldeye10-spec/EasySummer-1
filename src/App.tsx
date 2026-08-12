@@ -1,4 +1,8 @@
-import { BrowserRouter, HashRouter, Routes, Route } from 'react-router-dom'
+import {
+  RouterProvider,
+  createBrowserRouter,
+  createHashRouter,
+} from 'react-router-dom'
 import { AppLayout } from './components/layout/AppLayout'
 import { ErrorBoundary } from './components/common/ErrorBoundary'
 import { Dashboard } from './components/dashboard/Dashboard'
@@ -7,44 +11,37 @@ import { MonthlyJournal } from './components/journal/MonthlyJournal'
 import { Settings } from './components/settings/Settings'
 import { Trash } from './components/settings/Trash'
 import { Overview } from './components/overview/Overview'
-import { DailySummaryModal } from './components/dashboard/DailySummaryModal'
-import { useDailySummary } from './hooks/useDailySummary'
 
-// Use HashRouter for static file deployment (file:// or no server SPA fallback),
-// BrowserRouter for dev (Vite dev server handles fallback).
-const Router = import.meta.env.PROD ? HashRouter : BrowserRouter
+// Use hash history for static file deployment (file:// or no server SPA fallback),
+// browser history for dev (Vite dev server handles fallback).
+//
+// We use the data-router variants (create*Router + <RouterProvider>) rather than
+// the legacy <BrowserRouter>/<HashRouter> components. The legacy components
+// silently ignore the `viewTransition` prop on <NavLink>; the data router honors
+// it, which is what drives the smooth page cross-fade.
+const createRouter = import.meta.env.PROD ? createHashRouter : createBrowserRouter
 
-function DailySummaryHandler() {
-  const { showModal, dismiss, saveSummary, todos } = useDailySummary()
+const routes = [
+  {
+    element: <AppLayout />,
+    children: [
+      { path: '/', element: <Dashboard /> },
+      { path: '/quadrant', element: <QuadrantView /> },
+      { path: '/journal', element: <MonthlyJournal /> },
+      { path: '/journal/:year/:month', element: <MonthlyJournal /> },
+      { path: '/overview', element: <Overview /> },
+      { path: '/settings', element: <Settings /> },
+      { path: '/trash', element: <Trash /> },
+    ],
+  },
+]
 
-  if (!showModal) return null
-
-  return (
-    <DailySummaryModal
-      todos={todos}
-      onSave={saveSummary}
-      onDismiss={dismiss}
-    />
-  )
-}
+const router = createRouter(routes)
 
 export default function App() {
   return (
     <ErrorBoundary>
-      <Router>
-        <DailySummaryHandler />
-        <Routes>
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/quadrant" element={<QuadrantView />} />
-            <Route path="/journal" element={<MonthlyJournal />} />
-            <Route path="/journal/:year/:month" element={<MonthlyJournal />} />
-            <Route path="/overview" element={<Overview />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/trash" element={<Trash />} />
-          </Route>
-        </Routes>
-      </Router>
+      <RouterProvider router={router} />
     </ErrorBoundary>
   )
 }

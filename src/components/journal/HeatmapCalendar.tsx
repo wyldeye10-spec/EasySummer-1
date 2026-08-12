@@ -22,10 +22,10 @@ const DAY_LABELS = ['一', '二', '三', '四', '五', '六', '日']
 function getHeatColor(count: number, maxCount: number): string {
   if (count === 0) return 'bg-warm-100/50 dark:bg-warm-800/30 ring-1 ring-warm-300/10 dark:ring-warm-600/15'
   const ratio = maxCount > 0 ? count / maxCount : 0
-  if (ratio <= 0.25) return 'bg-warm-200/60 dark:bg-warm-700/50 ring-1 ring-warm-300/20 dark:ring-warm-500/20'
-  if (ratio <= 0.5)  return 'bg-warm-300/70 dark:bg-warm-600/60 ring-1 ring-warm-400/30 dark:ring-warm-400/30'
-  if (ratio <= 0.75) return 'bg-warm-400/80 dark:bg-warm-500/70 ring-1 ring-warm-500/40 dark:ring-warm-300/40'
-  return 'bg-warm-500/90 dark:bg-warm-400/90 ring-1 ring-warm-600/50 dark:ring-warm-200/50'
+  if (ratio <= 0.25) return 'bg-study-100/60 dark:bg-study-900/50 ring-1 ring-study-200/30 dark:ring-study-700/30'
+  if (ratio <= 0.5)  return 'bg-study-200/70 dark:bg-study-800/60 ring-1 ring-study-300/30 dark:ring-study-600/30'
+  if (ratio <= 0.75) return 'bg-study-400/80 dark:bg-study-600/70 ring-1 ring-study-400/30 dark:ring-study-500/40'
+  return 'bg-study-500/90 dark:bg-study-500/90 ring-1 ring-study-600/50 dark:ring-study-400/50'
 }
 
 function formatTooltipDate(dateStr: string): string {
@@ -183,7 +183,7 @@ export function HeatmapCalendar({ year, month, todos }: Props) {
               key={cell.date}
               className={`aspect-square rounded-md flex items-center justify-center text-[11px] font-medium transition-all duration-200 hover:scale-125 hover:z-10 relative cursor-default ${
                 cell.isToday
-                  ? '!ring-2 !ring-warm-500 ring-offset-1 dark:ring-offset-warm-900'
+                  ? '!ring-2 !ring-study-500 ring-offset-1 dark:ring-offset-warm-900'
                   : ''
               } ${colorClass}`}
               onMouseEnter={e => handleMouseEnter(e, cell)}

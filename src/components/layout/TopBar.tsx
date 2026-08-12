@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { flushSync } from 'react-dom'
 import { useUIStore } from '../../store/uiStore'
 import { useSettingsStore } from '../../store/settingsStore'
 import { getGreeting } from '../../utils/date'
@@ -31,6 +32,38 @@ export function TopBar() {
 
   // Auto dark mode
   const { markUserOverride } = useAutoDarkMode()
+
+  // Toggle dark mode with a GPU-accelerated cross-fade (View Transitions API).
+  // Fallback: instant flip when the browser doesn't support View Transitions.
+  const handleToggleDarkMode = () => {
+    markUserOverride()
+    const root = document.documentElement
+    const nextDark = !darkMode
+
+    const applyChange = () => {
+      root.classList.toggle('dark', nextDark)
+      // flushSync so the 🌙/☀️ icon and any `darkMode`-driven UI re-render
+      // synchronously — otherwise they'd be captured in the "new" snapshot in
+      // their old state and pop in after the cross-fade finishes.
+      flushSync(() => {
+        toggleDarkMode()
+      })
+      try { localStorage.setItem('summer-planner-dark-mode', String(nextDark)) } catch { /* ignore */ }
+    }
+
+    const doc = document as Document & {
+      startViewTransition?: (cb: () => void) => { finished: Promise<void> }
+    }
+    if (typeof doc.startViewTransition === 'function') {
+      // Freeze per-element transitions for the duration of the cross-fade so
+      // the active nav pill / inputs don't flash (see .theme-changing in CSS).
+      root.classList.add('theme-changing')
+      const vt = doc.startViewTransition(() => applyChange())
+      vt.finished.finally(() => root.classList.remove('theme-changing'))
+    } else {
+      applyChange()
+    }
+  }
 
   return (
     <header className="sticky top-0 z-30 glass-strong border-b border-warm-200/60 dark:bg-warm-900/85 dark:border-warm-700/40">
@@ -85,10 +118,7 @@ export function TopBar() {
 
           {/* Dark Mode */}
           <button
-            onClick={() => {
-              markUserOverride()
-              toggleDarkMode()
-            }}
+            onClick={handleToggleDarkMode}
             className="p-2 text-lg hover-lift rounded-xl transition-all"
             title={darkMode ? '切换日间模式' : '切换夜间模式'}
           >

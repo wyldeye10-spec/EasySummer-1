@@ -8,10 +8,10 @@ export const PRESET_CATEGORY_LABELS: Record<string, string> = {
 }
 
 export const PRESET_CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string; hex: string }> = {
-  study: { bg: 'bg-study-100', text: 'text-study-700', border: 'border-study-400', hex: '#5a9ec9' },
-  work: { bg: 'bg-work-100', text: 'text-work-700', border: 'border-work-400', hex: '#d97c63' },
-  life: { bg: 'bg-life-100', text: 'text-life-700', border: 'border-life-400', hex: '#6ab880' },
-  other: { bg: 'bg-other-100', text: 'text-other-700', border: 'border-other-400', hex: '#a895c5' },
+  study: { bg: 'bg-study-100 dark:bg-study-900/30', text: 'text-study-700 dark:text-study-300', border: 'border-study-400 dark:border-study-700', hex: '#4285f4' },
+  work: { bg: 'bg-work-100 dark:bg-work-900/30', text: 'text-work-700 dark:text-work-300', border: 'border-work-400 dark:border-work-700', hex: '#ea4335' },
+  life: { bg: 'bg-life-100 dark:bg-life-900/30', text: 'text-life-700 dark:text-life-300', border: 'border-life-400 dark:border-life-700', hex: '#34a853' },
+  other: { bg: 'bg-other-100 dark:bg-other-900/30', text: 'text-other-700 dark:text-other-300', border: 'border-other-400 dark:border-other-700', hex: '#a142f4' },
 }
 
 /** 分类切换选项 — 仅 AppMode 三种（学习/工作/其他） */
@@ -58,7 +58,7 @@ export function getCategoryColors(category: string, customCategories?: { name: s
       }
     }
   }
-  return { bg: 'bg-warm-100', text: 'text-warm-700', border: 'border-warm-400', hex: '#c49a5c' }
+  return { bg: 'bg-warm-100', text: 'text-warm-700', border: 'border-warm-400', hex: '#4285f4' }
 }
 
 // Keep for backward compatibility
