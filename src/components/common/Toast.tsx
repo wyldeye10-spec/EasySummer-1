@@ -13,10 +13,10 @@ export function Toast() {
           key={t.id}
           className={`px-4 py-3 rounded-xl shadow-md text-sm font-medium flex items-center gap-2 animate-[slideIn_0.3s_ease-out] ${
             t.type === 'success'
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+              ? 'bg-life-50 text-life-700 border border-life-200'
               : t.type === 'error'
-              ? 'bg-red-50 text-red-700 border border-red-200'
-              : 'bg-blue-50 text-blue-700 border border-blue-200'
+              ? 'bg-work-50 text-work-700 border border-work-200'
+              : 'bg-study-50 text-study-700 border border-study-200'
           }`}
           onClick={() => removeToast(t.id)}
         >

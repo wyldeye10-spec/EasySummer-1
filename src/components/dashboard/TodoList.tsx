@@ -94,7 +94,7 @@ export function TodoList() {
             <div
               className={`h-full rounded-full transition-all duration-700 ease-out ${
                 completionRate === 100
-                  ? 'bg-gradient-to-r from-emerald-400 to-emerald-500'
+                  ? 'bg-gradient-to-r from-life-400 to-life-500'
                   : completionRate > 50
                     ? 'bg-gradient-to-r from-study-400 to-study-500'
                     : 'bg-gradient-to-r from-study-500 to-study-600'

@@ -68,7 +68,7 @@ export function SubTaskList({ parentTodo }: Props) {
             onClick={() => handleToggle(sub)}
             className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all ${
               sub.status === 'completed'
-                ? 'bg-emerald-400 border-emerald-400 text-white shadow-sm'
+                ? 'bg-life-400 border-life-400 text-white shadow-sm'
                 : 'border-warm-300 dark:border-warm-600 hover:border-study-400 hover:bg-study-50 dark:hover:bg-study-900/20'
             }`}
           >
@@ -77,7 +77,7 @@ export function SubTaskList({ parentTodo }: Props) {
           <span className="flex-1">{sub.title}</span>
           <button
             onClick={() => deleteTodo(sub.id)}
-            className="opacity-0 group-hover:opacity-100 text-warm-400 hover:text-red-500 text-xs transition-all"
+            className="opacity-0 group-hover:opacity-100 text-warm-400 hover:text-work-500 text-xs transition-all"
           >
             ✕
           </button>

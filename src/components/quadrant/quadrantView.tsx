@@ -17,23 +17,23 @@ import { SkeletonCard } from '../common/Skeleton'
 
 const QUADRANT_CONFIG: Record<Quadrant, {
   title: string; subtitle: string; emoji: string;
-  gradient: string; borderColor: string; bgColor: string
+  gradient: string; borderColor: string
 }> = {
   Q1: {
     title: '紧急重要', subtitle: '立即去做', emoji: '🔥',
-    gradient: 'from-red-50/60 to-orange-50/30', borderColor: 'border-l-red-400', bgColor: 'bg-red-50/20',
+    gradient: 'from-warm-100/60 to-warm-50/40', borderColor: 'border-l-study-500',
   },
   Q2: {
     title: '重要不紧急', subtitle: '计划去做', emoji: '📋',
-    gradient: 'from-study-50/60 to-blue-50/30', borderColor: 'border-l-study-400', bgColor: 'bg-study-50/20',
+    gradient: 'from-warm-100/40 to-warm-50/25', borderColor: 'border-l-study-400',
   },
   Q3: {
     title: '紧急不重要', subtitle: '快速处理', emoji: '⚡',
-    gradient: 'from-amber-50/60 to-yellow-50/30', borderColor: 'border-l-amber-400', bgColor: 'bg-amber-50/20',
+    gradient: 'from-warm-50/35 to-warm-50/20', borderColor: 'border-l-study-300',
   },
   Q4: {
     title: '不重要不紧急', subtitle: '尽量减少', emoji: '🌿',
-    gradient: 'from-warm-50/60 to-stone-50/30', borderColor: 'border-l-warm-300', bgColor: 'bg-warm-50/30',
+    gradient: 'from-warm-50/25 to-transparent', borderColor: 'border-l-study-200',
   },
 }
 
@@ -85,7 +85,7 @@ export function QuadrantView() {
 
   const byQuadrant = (q: Quadrant) =>
     todos
-      .filter(t => t.status === 'pending' && t.quadrant === q && t.mode === mode)
+      .filter(t => t.status === 'pending' && !t.parentId && t.quadrant === q && t.mode === mode)
       .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
 
   return (

@@ -4,6 +4,15 @@ import { useUIStore } from '../../store/uiStore'
 import { useSettingsStore } from '../../store/settingsStore'
 import { getGreeting } from '../../utils/date'
 import { useAutoDarkMode } from '../../hooks/useAutoDarkMode'
+import { CATEGORY_SWITCH_OPTIONS } from '../../constants'
+import type { AppMode } from '../../types'
+
+const MODE_GRADIENTS: Record<AppMode, string> = {
+  study: 'bg-gradient-to-br from-study-400 to-study-500',
+  work: 'bg-gradient-to-br from-work-400 to-work-500',
+  life: 'bg-gradient-to-br from-life-400 to-life-500',
+  other: 'bg-gradient-to-br from-other-400 to-other-500',
+}
 
 export function TopBar() {
   const mode = useUIStore(s => s.mode)
@@ -65,6 +74,8 @@ export function TopBar() {
     }
   }
 
+  const modeIndex = CATEGORY_SWITCH_OPTIONS.findIndex(o => o.key === mode)
+
   return (
     <header className="sticky top-0 z-30 glass-strong border-b border-warm-200/60 dark:bg-warm-900/85 dark:border-warm-700/40">
       <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -82,38 +93,23 @@ export function TopBar() {
           {/* Mode Toggle with animated slider */}
           <div className="flex bg-warm-200/60 rounded-xl p-0.5 relative">
             <div
-              className={`absolute top-0.5 bottom-0.5 w-[calc(33.33%-3px)] rounded-lg transition-all duration-300 ease-out ${
-                mode === 'study'
-                  ? 'left-0.5 bg-gradient-to-br from-study-400 to-study-500 shadow-md'
-                  : mode === 'work'
-                    ? 'left-[calc(33.33%+0.5px)] bg-gradient-to-br from-work-400 to-work-500 shadow-md'
-                    : 'left-[calc(66.67%+1.5px)] bg-gradient-to-br from-other-400 to-other-500 shadow-md'
-              }`}
+              className={`absolute top-0.5 bottom-0.5 rounded-lg transition-all duration-300 ease-out shadow-md ${MODE_GRADIENTS[mode]}`}
+              style={{
+                width: `calc(${100 / CATEGORY_SWITCH_OPTIONS.length}% - 3px)`,
+                left: `calc(${modeIndex * (100 / CATEGORY_SWITCH_OPTIONS.length)}% + 2px)`,
+              }}
             />
-            <button
-              onClick={() => setMode('study')}
-              className={`relative px-3 py-1.5 text-sm rounded-lg transition-colors duration-300 z-10 ${
-                mode === 'study' ? 'text-white font-medium' : 'text-warm-500'
-              }`}
-            >
-              📚 学习
-            </button>
-            <button
-              onClick={() => setMode('work')}
-              className={`relative px-3 py-1.5 text-sm rounded-lg transition-colors duration-300 z-10 ${
-                mode === 'work' ? 'text-white font-medium' : 'text-warm-500'
-              }`}
-            >
-              💼 工作
-            </button>
-            <button
-              onClick={() => setMode('other')}
-              className={`relative px-3 py-1.5 text-sm rounded-lg transition-colors duration-300 z-10 ${
-                mode === 'other' ? 'text-white font-medium' : 'text-warm-500'
-              }`}
-            >
-              🌿 其他
-            </button>
+            {CATEGORY_SWITCH_OPTIONS.map(({ key, label, emoji }) => (
+              <button
+                key={key}
+                onClick={() => setMode(key)}
+                className={`relative flex-1 px-3 py-1.5 text-sm rounded-lg transition-colors duration-300 z-10 whitespace-nowrap ${
+                  mode === key ? 'text-white font-medium' : 'text-warm-500'
+                }`}
+              >
+                {emoji} {label}
+              </button>
+            ))}
           </div>
 
           {/* Dark Mode */}

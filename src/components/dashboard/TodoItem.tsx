@@ -178,16 +178,16 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
       className={`group flex items-start gap-3 p-3.5 rounded-xl transition-all duration-300 border hover-lift relative ${
         exiting ? 'opacity-0 translate-x-8 scale-95 pointer-events-none' : ''
       } ${
-        celebrate ? 'animate-bounce-gentle ring-2 ring-emerald-300 bg-emerald-50/50' : ''
+        celebrate ? 'animate-bounce-gentle ring-2 ring-life-300 bg-life-50/50' : ''
       } ${
         isDragging ? 'opacity-50 shadow-xl scale-[1.02] z-50 bg-white/90 ring-2 ring-warm-300/60' : ''
       } ${
         isCompleted
           ? 'opacity-50 bg-warm-100/50 border-warm-200/40'
           : effectiveUrgency === 'overdue'
-            ? 'ring-1 ring-red-300/60 bg-red-50/40 border-red-200/40'
+            ? 'ring-1 ring-work-300/60 bg-work-50/40 border-work-200/40'
             : effectiveUrgency === 'urgent'
-              ? 'ring-1 ring-red-200/40 bg-red-50/30 border-red-200/30'
+              ? 'ring-1 ring-work-200/40 bg-work-50/30 border-work-200/30'
               : effectiveUrgency === 'soon'
                 ? 'ring-1 ring-amber-200/40 bg-amber-50/30 border-amber-200/30'
                 : 'border-transparent hover:border-warm-200/80 bg-white/60 hover:bg-white'
@@ -216,7 +216,7 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
       {!isCompleted && (
         <div
           className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full transition-all ${
-            todo.priority === 'P1' ? 'bg-red-400 animate-pulse-soft' :
+            todo.priority === 'P1' ? 'bg-work-400 animate-pulse-soft' :
             todo.priority === 'P2' ? 'bg-study-400' :
             todo.priority === 'P3' ? 'bg-amber-400' : 'bg-warm-300'
           }`}
@@ -228,11 +228,11 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
         onClick={handleCheck}
         className={`relative mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
           isCompleted
-            ? 'bg-emerald-400 border-emerald-400 text-white scale-90'
+            ? 'bg-life-400 border-life-400 text-white scale-90'
             : effectiveUrgency === 'overdue'
-              ? 'border-red-300 hover:border-red-400 hover:bg-red-50'
+              ? 'border-work-300 hover:border-work-400 hover:bg-work-50'
               : effectiveUrgency === 'urgent'
-                ? 'border-red-200 hover:border-red-300 hover:bg-red-50'
+                ? 'border-work-200 hover:border-work-300 hover:bg-work-50'
                 : effectiveUrgency === 'soon'
                   ? 'border-amber-300 hover:border-amber-400 hover:bg-amber-50'
                   : 'border-warm-300 hover:border-study-500 hover:bg-warm-50 hover:scale-110'
@@ -270,9 +270,9 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
             {!isCompleted && hasDueDate && (
               <span className={`ml-2 text-xs font-medium ${
                 overdue
-                  ? 'text-red-400 animate-pulse-soft'
+                  ? 'text-work-400 animate-pulse-soft'
                   : dueDateDays !== null && dueDateDays <= 3
-                    ? 'text-red-400'
+                    ? 'text-work-400'
                     : dueDateDays !== null && dueDateDays <= 7
                       ? 'text-amber-500'
                       : 'text-warm-400'
@@ -340,7 +340,7 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
               className={`text-xs font-medium px-1.5 py-0.5 rounded-md transition-all ${
                 isCompleted ? 'cursor-default' : 'cursor-pointer hover:ring-1 hover:ring-warm-300/60 hover:shadow-sm'
               } ${
-                todo.priority === 'P1' ? 'text-red-500 bg-red-50/60 dark:bg-red-900/20' :
+                todo.priority === 'P1' ? 'text-work-500 bg-work-50/60 dark:bg-work-900/20' :
                 todo.priority === 'P2' ? 'text-study-600 bg-study-50/60 dark:bg-study-900/20' :
                 todo.priority === 'P3' ? 'text-amber-600 bg-amber-50/60 dark:bg-amber-900/20' :
                 'text-warm-500 bg-warm-100/60 dark:bg-warm-800/40'
@@ -362,7 +362,7 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
                         ? 'bg-warm-200/60 dark:bg-warm-700/60'
                         : 'hover:bg-warm-100 dark:hover:bg-warm-700/40'
                     } ${
-                      p === 'P1' ? 'text-red-600 dark:text-red-400' :
+                      p === 'P1' ? 'text-work-600 dark:text-work-400' :
                       p === 'P2' ? 'text-study-600 dark:text-study-400' :
                       p === 'P3' ? 'text-amber-600 dark:text-amber-400' :
                       'text-warm-600 dark:text-warm-400'
@@ -387,8 +387,8 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
           {/* Due date — compact display */}
           {hasDueDate && (
             <span className={`text-xs flex items-center gap-1 ${
-              overdue ? 'text-red-400 font-medium' :
-              dueDateDays !== null && dueDateDays <= 3 ? 'text-red-400' :
+              overdue ? 'text-work-400 font-medium' :
+              dueDateDays !== null && dueDateDays <= 3 ? 'text-work-400' :
               dueDateDays !== null && dueDateDays <= 7 ? 'text-amber-500' :
               'text-warm-400'
             }`}>
@@ -417,7 +417,7 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
 
           {/* Actual focus time */}
           {todo.actualMinutes != null && todo.actualMinutes > 0 && (
-            <span className="text-xs text-emerald-500 dark:text-emerald-400 flex items-center gap-1">
+            <span className="text-xs text-life-500 dark:text-life-400 flex items-center gap-1">
               <span className="text-[10px]">🎯</span>
               {todo.actualMinutes >= 60
                 ? `${Math.floor(todo.actualMinutes / 60)}h${todo.actualMinutes % 60 ? ` ${todo.actualMinutes % 60}m` : ''}`
@@ -476,7 +476,7 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
       {isParent && subCount > 0 && (
         <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full flex-shrink-0 ${
           subAllDone
-            ? 'bg-emerald-100/80 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400'
+            ? 'bg-life-100/80 text-life-600 dark:bg-life-900/30 dark:text-life-400'
             : 'bg-warm-200/60 text-warm-500 dark:bg-warm-700/50 dark:text-warm-400'
         }`}>
           {showSubTasks ? `📋 ${subCount}` : `${subDone}/${subCount}`}
@@ -504,7 +504,7 @@ export function TodoItem({ todo, index = 0, onComplete, onUndo, onDelete, onEdit
         </button>
         <button
           onClick={handleDelete}
-          className="p-1.5 text-warm-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all text-xs"
+          className="p-1.5 text-warm-400 hover:text-work-500 hover:bg-work-50 rounded-lg transition-all text-xs"
           title="删除"
         >
           🗑️

@@ -63,8 +63,8 @@ export function MonthlyJournal() {
 
   const statCards = [
     { label: '本月事项', value: stats.total, color: 'text-warm-800' },
-    { label: '已完成', value: stats.completed, color: 'text-emerald-500' },
-    { label: '完成率', value: `${stats.rate}%`, color: stats.rate >= 80 ? 'text-emerald-500' : stats.rate >= 50 ? 'text-study-500' : 'text-warm-500' },
+    { label: '已完成', value: stats.completed, color: 'text-life-500' },
+    { label: '完成率', value: `${stats.rate}%`, color: stats.rate >= 80 ? 'text-life-500' : stats.rate >= 50 ? 'text-study-500' : 'text-warm-500' },
     { label: '累计时长', value: stats.hours > 0 ? `${stats.hours}h${stats.mins > 0 ? ` ${stats.mins}m` : ''}` : `${stats.mins}m`, color: 'text-study-500' },
   ]
 
@@ -131,7 +131,7 @@ export function MonthlyJournal() {
                 <circle
                   cx="50" cy="50" r="40" fill="none" stroke="currentColor"
                   className={`progress-ring-circle ${
-                    stats.rate >= 80 ? 'text-emerald-400' : stats.rate >= 50 ? 'text-study-500' : 'text-warm-400'
+                    stats.rate >= 80 ? 'text-life-400' : stats.rate >= 50 ? 'text-study-500' : 'text-warm-400'
                   }`}
                   strokeWidth="8" strokeLinecap="round"
                   strokeDasharray={`${2 * Math.PI * 40}`}

@@ -55,7 +55,7 @@ export function NextGoalsSection({ goals, onAdd, onToggle, onRemove }: Props) {
       {goals.length > 0 && (
         <div className="h-1.5 bg-warm-100 dark:bg-warm-800 rounded-full mb-3 overflow-hidden">
           <div
-            className="h-full bg-emerald-500 rounded-full transition-all duration-300"
+            className="h-full bg-life-500 rounded-full transition-all duration-300"
             style={{ width: `${(doneCount / goals.length) * 100}%` }}
           />
         </div>
@@ -73,7 +73,7 @@ export function NextGoalsSection({ goals, onAdd, onToggle, onRemove }: Props) {
                 title={g.done ? '标记未完成' : '标记完成'}
                 className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all ${
                   g.done
-                    ? 'bg-emerald-400 border-emerald-400 text-white'
+                    ? 'bg-life-400 border-life-400 text-white'
                     : 'border-warm-300 dark:border-warm-600 hover:border-study-400 hover:bg-study-50 dark:hover:bg-study-900/20'
                 }`}
               >
@@ -89,7 +89,7 @@ export function NextGoalsSection({ goals, onAdd, onToggle, onRemove }: Props) {
               <button
                 onClick={() => onRemove(g.id)}
                 title="删除"
-                className="opacity-0 group-hover:opacity-100 text-warm-400 hover:text-red-500 text-xs transition-all flex-shrink-0"
+                className="opacity-0 group-hover:opacity-100 text-warm-400 hover:text-work-500 text-xs transition-all flex-shrink-0"
               >
                 ✕
               </button>

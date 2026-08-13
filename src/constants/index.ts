@@ -14,10 +14,11 @@ export const PRESET_CATEGORY_COLORS: Record<string, { bg: string; text: string; 
   other: { bg: 'bg-other-100 dark:bg-other-900/30', text: 'text-other-700 dark:text-other-300', border: 'border-other-400 dark:border-other-700', hex: '#a142f4' },
 }
 
-/** 分类切换选项 — 仅 AppMode 三种（学习/工作/其他） */
+/** 分类切换选项 — 与 AppMode 四种一一对应（学习/工作/生活/其他） */
 export const CATEGORY_SWITCH_OPTIONS: { key: PresetCategory; label: string; emoji: string }[] = [
   { key: 'study', label: '学习', emoji: '📚' },
   { key: 'work', label: '工作', emoji: '💼' },
+  { key: 'life', label: '生活', emoji: '🌱' },
   { key: 'other', label: '其他', emoji: '📌' },
 ]
 

@@ -120,7 +120,7 @@ export function PomodoroTimer() {
     finishEarly()
   }
 
-  if (mode !== 'study') return null
+  if (mode === 'other') return null
 
   const display = `${String(displayMinutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')}`
   const circumference = 2 * Math.PI * 42
@@ -131,8 +131,8 @@ export function PomodoroTimer() {
         ? 'border-study-300/60 dark:border-study-600/40 shadow-lg shadow-study-200/30 dark:shadow-study-900/20'
         : state === 'finished'
           ? pulse
-            ? 'border-emerald-300/60 dark:border-emerald-600/40 ring-2 ring-emerald-300/50 dark:ring-emerald-600/30 shadow-xl shadow-emerald-200/40 dark:shadow-emerald-900/20'
-            : 'border-emerald-200/40 dark:border-emerald-700/30'
+            ? 'border-life-300/60 dark:border-life-600/40 ring-2 ring-life-300/50 dark:ring-life-600/30 shadow-xl shadow-life-200/40 dark:shadow-life-900/20'
+            : 'border-life-200/40 dark:border-life-700/30'
           : 'border-warm-200/60 dark:border-warm-700/40'
     }`}>
       <h3 className="text-sm font-medium text-warm-600 mb-4 flex items-center gap-2">
@@ -142,7 +142,7 @@ export function PomodoroTimer() {
           <span className="text-xs text-study-500 font-normal animate-pulse-soft">专注中...</span>
         )}
         {state === 'finished' && (
-          <span className="text-xs text-emerald-500 font-normal">完成！</span>
+          <span className="text-xs text-life-500 font-normal">完成！</span>
         )}
       </h3>
 
@@ -158,7 +158,7 @@ export function PomodoroTimer() {
               state === 'running'
                 ? 'bg-study-200/60 dark:bg-study-800/40'
                 : state === 'finished'
-                  ? 'bg-emerald-200/60 dark:bg-emerald-800/40 animate-glow-burst'
+                  ? 'bg-life-200/60 dark:bg-life-800/40 animate-glow-burst'
                   : 'bg-transparent'
             }`}
             style={state === 'running' ? { opacity: 0.3 + progress * 0.5 } : undefined}
@@ -303,7 +303,7 @@ export function PomodoroTimer() {
           {state === 'finished' && (
             <button
               onClick={handleReset}
-              className="px-5 py-2 bg-emerald-500 text-white rounded-xl text-sm font-medium hover:bg-emerald-600 transition-all shadow-md hover:shadow-lg active:scale-95 animate-bounce-gentle"
+              className="px-5 py-2 bg-life-500 text-white rounded-xl text-sm font-medium hover:bg-life-600 transition-all shadow-md hover:shadow-lg active:scale-95 animate-bounce-gentle"
             >
               再来一个 🎉
             </button>
@@ -347,7 +347,7 @@ export function PomodoroTimer() {
             <div className="flex gap-2">
               <button
                 onClick={handleLogTime}
-                className="flex-1 px-4 py-2 bg-emerald-500 text-white rounded-xl text-sm font-medium hover:bg-emerald-600 transition-all shadow-md active:scale-95"
+                className="flex-1 px-4 py-2 bg-life-500 text-white rounded-xl text-sm font-medium hover:bg-life-600 transition-all shadow-md active:scale-95"
               >
                 记录
               </button>

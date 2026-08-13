@@ -188,7 +188,7 @@ export function Settings() {
               <span className="flex-1">{q}</span>
               <button
                 onClick={() => handleRemoveQuote(i)}
-                className="opacity-0 group-hover:opacity-100 text-warm-400 hover:text-red-500 hover:bg-red-50 p-1 rounded-lg transition-all"
+                className="opacity-0 group-hover:opacity-100 text-warm-400 hover:text-work-500 hover:bg-work-50 p-1 rounded-lg transition-all"
               >
                 ✕
               </button>
@@ -259,7 +259,7 @@ export function Settings() {
                 onClick={() => update({
                   customCategories: settings.customCategories.filter((_, idx) => idx !== i),
                 })}
-                className="text-warm-400 hover:text-red-500 text-xs opacity-0 group-hover:opacity-100 transition-all"
+                className="text-warm-400 hover:text-work-500 text-xs opacity-0 group-hover:opacity-100 transition-all"
               >
                 ✕
               </button>
@@ -319,7 +319,7 @@ export function Settings() {
                 onClick={() => update({
                   customTags: settings.customTags.filter(t => t !== tag),
                 })}
-                className="text-warm-400 hover:text-red-500 text-xs opacity-0 group-hover:opacity-100 transition-all"
+                className="text-warm-400 hover:text-work-500 text-xs opacity-0 group-hover:opacity-100 transition-all"
               >
                 ✕
               </button>
@@ -363,7 +363,7 @@ export function Settings() {
         <h3 className="font-semibold text-warm-800 mb-4 flex items-center gap-2">
           <span className="text-lg">💾</span> 数据管理
           {saveLabel && (
-            <span className="text-xs text-emerald-500 animate-scale-in">{saveLabel}</span>
+            <span className="text-xs text-life-500 animate-scale-in">{saveLabel}</span>
           )}
         </h3>
         <div className="flex flex-wrap gap-2">
@@ -381,7 +381,7 @@ export function Settings() {
           </button>
           <button
             onClick={handleReset}
-            className="px-4 py-2.5 bg-red-50 text-red-500 rounded-xl text-sm font-medium hover:bg-red-100 transition-all active:scale-95"
+            className="px-4 py-2.5 bg-work-50 text-work-500 rounded-xl text-sm font-medium hover:bg-work-100 transition-all active:scale-95"
           >
             🔄 重置设置
           </button>

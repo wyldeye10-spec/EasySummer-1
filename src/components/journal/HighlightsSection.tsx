@@ -78,7 +78,7 @@ export function HighlightsSection({ highlights, onAdd, onRemove }: Props) {
               <button
                 onClick={() => onRemove(h.id)}
                 title="删除"
-                className="opacity-0 group-hover:opacity-100 text-warm-400 hover:text-red-500 text-xs transition-all flex-shrink-0"
+                className="opacity-0 group-hover:opacity-100 text-warm-400 hover:text-work-500 text-xs transition-all flex-shrink-0"
               >
                 ✕
               </button>

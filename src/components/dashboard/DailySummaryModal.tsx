@@ -64,7 +64,7 @@ export function DailySummaryModal({ todos, onSave, onDismiss }: Props) {
 
         {/* Completed */}
         <div className="mb-4">
-          <h3 className="text-sm font-semibold text-emerald-500 mb-2 flex items-center gap-1">
+          <h3 className="text-sm font-semibold text-life-500 mb-2 flex items-center gap-1">
             ✅ 已完成 ({completed.length})
           </h3>
           {completed.length === 0 ? (
@@ -92,7 +92,7 @@ export function DailySummaryModal({ todos, onSave, onDismiss }: Props) {
               {pending.map(t => (
                 <div key={t.id} className="flex items-center gap-2 text-sm text-warm-700 dark:text-warm-300 pl-1">
                   <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-md ${
-                    t.priority === 'P1' ? 'bg-red-100 text-red-500' :
+                    t.priority === 'P1' ? 'bg-work-100 text-work-500' :
                     t.priority === 'P2' ? 'bg-study-100 text-study-600' :
                     'bg-warm-100 text-warm-500'
                   }`}>

@@ -116,7 +116,7 @@ export function QuickInput() {
             </span>
             <button
               onClick={handleClearDate}
-              className="text-warm-400 hover:text-red-500 text-xs ml-0.5 transition-colors"
+              className="text-warm-400 hover:text-work-500 text-xs ml-0.5 transition-colors"
             >
               ✕
             </button>
@@ -129,7 +129,7 @@ export function QuickInput() {
         {(Object.entries(PRIORITY_CONFIG) as [Priority, { emoji: string; label: string }][]).map(([p, cfg]) => {
           const isActive = selectedPriority === p
           const activeClasses: Record<string, string> = {
-            P1: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-300 dark:border-red-700',
+            P1: 'bg-work-100 dark:bg-work-900/30 text-work-700 dark:text-work-400 border-work-300 dark:border-work-700',
             P2: 'bg-study-100 dark:bg-study-900/30 text-study-700 dark:text-study-400 border-study-300 dark:border-study-700',
             P3: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700',
             P4: 'bg-warm-100 dark:bg-warm-800/60 text-warm-600 dark:text-warm-300 border-warm-300 dark:border-warm-600',

@@ -5,7 +5,7 @@ export type Category = PresetCategory | string
 export type Priority = 'P1' | 'P2' | 'P3' | 'P4'
 export type Quadrant = 'Q1' | 'Q2' | 'Q3' | 'Q4'
 export type TodoStatus = 'pending' | 'completed' | 'deleted'
-export type AppMode = 'study' | 'work' | 'other'
+export type AppMode = 'study' | 'work' | 'life' | 'other'
 
 export interface Todo {
   id: string

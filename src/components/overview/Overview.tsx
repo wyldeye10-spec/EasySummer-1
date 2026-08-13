@@ -58,14 +58,14 @@ function OverviewTaskRow({ todo }: { todo: Todo }) {
       isCompleted
         ? 'opacity-50 bg-warm-50/50 border-warm-100/50 dark:bg-warm-800/20 dark:border-warm-700/20'
         : overdue
-          ? 'bg-red-50/30 border-red-200/30 dark:bg-red-900/10 dark:border-red-800/20'
+          ? 'bg-work-50/30 border-work-200/30 dark:bg-work-900/10 dark:border-work-800/20'
           : 'bg-white/50 border-transparent hover:border-warm-200/60 dark:bg-warm-800/30 dark:hover:border-warm-700/40'
     }`}>
       {/* Priority glow bar */}
       {!isCompleted && (
         <div
           className={`w-1 h-8 rounded-full flex-shrink-0 self-center ${
-            todo.priority === 'P1' ? 'bg-red-400' :
+            todo.priority === 'P1' ? 'bg-work-400' :
             todo.priority === 'P2' ? 'bg-study-400' :
             todo.priority === 'P3' ? 'bg-amber-400' : 'bg-warm-300'
           }`}
@@ -94,7 +94,7 @@ function OverviewTaskRow({ todo }: { todo: Todo }) {
 
         {/* Priority */}
         <span className={`text-xs font-medium ${
-          todo.priority === 'P1' ? 'text-red-500' :
+          todo.priority === 'P1' ? 'text-work-500' :
           todo.priority === 'P2' ? 'text-study-600 dark:text-study-500' :
           'text-warm-500'
         }`}>
@@ -111,8 +111,8 @@ function OverviewTaskRow({ todo }: { todo: Todo }) {
         {/* Due date */}
         {hasDueDate && (
           <span className={`text-xs flex items-center gap-1 ${
-            overdue ? 'text-red-400 font-medium' :
-            !isCompleted && getDaysUntil(todo.dueDate!) <= 3 ? 'text-red-400' :
+            overdue ? 'text-work-400 font-medium' :
+            !isCompleted && getDaysUntil(todo.dueDate!) <= 3 ? 'text-work-400' :
             !isCompleted && getDaysUntil(todo.dueDate!) <= 7 ? 'text-amber-500' :
             'text-warm-400'
           }`}>
@@ -133,7 +133,7 @@ function OverviewTaskRow({ todo }: { todo: Todo }) {
 
         {/* Completed checkmark */}
         {isCompleted && (
-          <span className="text-xs text-emerald-500 font-medium">✓ 已完成</span>
+          <span className="text-xs text-life-500 font-medium">✓ 已完成</span>
         )}
       </div>
     </div>
@@ -236,7 +236,7 @@ export function Overview() {
 
   const statTiles = [
     { label: '未完成总数', value: stats.totalIncomplete, color: 'text-warm-700 dark:text-warm-300' },
-    { label: '今天到期', value: stats.dueToday, color: 'text-red-500' },
+    { label: '今天到期', value: stats.dueToday, color: 'text-work-500' },
     { label: '明天到期', value: stats.dueTomorrow, color: 'text-amber-500' },
     { label: '后天到期', value: stats.dueDayAfter, color: 'text-warm-600 dark:text-warm-400' },
     { label: '本周到期', value: stats.dueThisWeek, color: 'text-study-500 dark:text-study-400' },

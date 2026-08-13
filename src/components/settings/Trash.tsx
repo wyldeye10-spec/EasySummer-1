@@ -35,7 +35,7 @@ export function Trash() {
             </button>
             <button
               onClick={handleEmptyAll}
-              className="px-3 py-1.5 text-xs font-medium bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-all active:scale-95"
+              className="px-3 py-1.5 text-xs font-medium bg-work-50 text-work-500 rounded-xl hover:bg-work-100 transition-all active:scale-95"
             >
               一键清空
             </button>
@@ -61,14 +61,14 @@ export function Trash() {
               <div
                 key={todo.id}
                 className={`flex items-center gap-3 p-4 glass rounded-2xl border transition-all hover-lift ${
-                  isExpiring ? 'border-red-200/60' : 'border-warm-200/60'
+                  isExpiring ? 'border-work-200/60' : 'border-warm-200/60'
                 }`}
               >
                 <div className="flex-1 min-w-0">
                   <div className="text-sm text-warm-600 line-through">{todo.title}</div>
                   {todo.deletedAt && (
                     <div className={`text-xs mt-1 flex items-center gap-1 ${
-                      isExpiring ? 'text-red-400 font-medium' : 'text-warm-400'
+                      isExpiring ? 'text-work-400 font-medium' : 'text-warm-400'
                     }`}>
                       <span>
                         删除时间：{new Date(todo.deletedAt).toLocaleDateString()}
@@ -89,7 +89,7 @@ export function Trash() {
                 </button>
                 <button
                   onClick={() => permanentlyDeleteTodo(todo.id)}
-                  className="px-3.5 py-1.5 text-xs font-medium bg-red-50 text-red-400 rounded-xl hover:bg-red-100 hover:text-red-500 transition-all active:scale-95"
+                  className="px-3.5 py-1.5 text-xs font-medium bg-work-50 text-work-400 rounded-xl hover:bg-work-100 hover:text-work-500 transition-all active:scale-95"
                 >
                   彻底删除
                 </button>

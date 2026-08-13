@@ -47,7 +47,7 @@ export function AppLayout() {
         <div className={`px-4 py-2.5 text-center text-sm font-medium flex items-center justify-center gap-2 ${
           storageMode === 'localstorage'
             ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-b border-amber-200/60 dark:border-amber-800/40'
-            : 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-b border-red-200/60 dark:border-red-800/40'
+            : 'bg-work-50 dark:bg-work-900/20 text-work-600 dark:text-work-400 border-b border-work-200/60 dark:border-work-800/40'
         }`}>
           <span>
             {storageMode === 'localstorage'
